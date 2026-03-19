@@ -1,0 +1,40 @@
+name: dashboard
+
+on:
+  issues:
+    types: [opened, closed, reopened, labeled, unlabeled]
+  schedule:
+    - cron: '*/15 * * * *'  # every 15 minutes
+  workflow_dispatch:
+
+concurrency:
+  group: dashboard
+  cancel-in-progress: true
+
+jobs:
+  generate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Generate dashboard
+        env:
+          GITHUB_TOKEN: ${{ secrets.PROJECT_TOKEN }}
+          GITHUB_OWNER: ${{ github.repository_owner }}
+          GITHUB_REPO: ${{ github.event.repository.name }}
+        run: node scripts/generate-dashboard.mjs
+
+      - name: Commit and push if changed
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add docs/index.html
+          if ! git diff --cached --quiet; then
+            git commit -m "chore: regenerate dashboard [skip ci]"
+            git pull --rebase
+            git push
+          fi

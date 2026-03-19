@@ -1,0 +1,86 @@
+name: Validate Issue
+description: Parses issue body for project/module and validates creator membership.
+
+inputs:
+  username:
+    description: The GitHub username of the issue creator.
+    required: true
+  body:
+    description: The issue body text.
+    required: true
+
+outputs:
+  is-valid:
+    description: "'true' if the creator is a member or reviewer for the selected project."
+    value: ${{ steps.validate.outputs.is_valid }}
+  project-name:
+    description: The project name.
+    value: ${{ steps.validate.outputs.project_name }}
+  project-key:
+    description: The project key.
+    value: ${{ steps.validate.outputs.project_key }}
+  project-url:
+    description: The classroom project board URL.
+    value: ${{ steps.validate.outputs.project_url }}
+  repo-url:
+    description: The project repository URL.
+    value: ${{ steps.validate.outputs.repo_url }}
+  module:
+    description: The selected module string.
+    value: ${{ steps.validate.outputs.module }}
+  module-num:
+    description: The module number (e.g. "02").
+    value: ${{ steps.validate.outputs.module_num }}
+  assignees:
+    description: Comma-separated list of team member GitHub usernames.
+    value: ${{ steps.validate.outputs.assignees }}
+
+runs:
+  using: composite
+  steps:
+    - name: Validate
+      id: validate
+      uses: actions/github-script@v8
+      env:
+        INPUT_USERNAME: ${{ inputs.username }}
+        INPUT_BODY: ${{ inputs.body }}
+      with:
+        script: |
+          const fs = require('fs');
+          const data = JSON.parse(fs.readFileSync('config.json', 'utf8'));
+          const creator = process.env.INPUT_USERNAME;
+          const body = process.env.INPUT_BODY || '';
+
+          const moduleMatch = body.match(/### Module\s*\n\s*(.+)/);
+          const selectedModule = moduleMatch ? moduleMatch[1].trim() : '';
+          core.setOutput('module', selectedModule);
+
+          const projectMatch = body.match(/### Project\s*\n\s*(.+)/);
+          const selectedProject = projectMatch ? projectMatch[1].trim() : '';
+
+          if (!selectedProject) {
+            core.setOutput('is_valid', 'false');
+            return;
+          }
+
+          const isReviewer = data.reviewers.some(r => r.github.toLowerCase() === creator.toLowerCase());
+          const team = data.projects.find(t => t.name === selectedProject);
+
+          if (!team) {
+            core.setOutput('is_valid', 'false');
+            return;
+          }
+
+          const isMember = team.members.some(m => m.toLowerCase() === creator.toLowerCase());
+          if (!isMember && !isReviewer) {
+            core.setOutput('is_valid', 'false');
+            return;
+          }
+
+          core.setOutput('is_valid', 'true');
+          core.setOutput('project_url', data.classroom.url);
+          core.setOutput('project_name', team.name);
+          core.setOutput('project_key', team.key);
+          core.setOutput('repo_url', team.repo);
+          core.setOutput('module_num', selectedModule.split(' - ')[0]);
+          core.setOutput('assignees', team.members.join(','));

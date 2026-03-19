@@ -1,0 +1,71 @@
+name: Set Project Status
+description: Sets the status of an issue on the GitHub Project board.
+
+inputs:
+  issue-node-id:
+    description: The GraphQL node ID of the issue.
+    required: true
+  status:
+    description: The status to set (In Review, In Progress, Done).
+    required: true
+  github-token:
+    description: Token with project write access.
+    required: true
+
+runs:
+  using: composite
+  steps:
+    - name: Set status
+      uses: actions/github-script@v8
+      env:
+        GH_TOKEN: ${{ inputs.github-token }}
+        ISSUE_NODE_ID: ${{ inputs.issue-node-id }}
+        TARGET_STATUS: ${{ inputs.status }}
+      with:
+        github-token: ${{ inputs.github-token }}
+        script: |
+          const fs = require('fs');
+          const config = JSON.parse(fs.readFileSync('config.json', 'utf8'));
+          const { id: projectId, statusFieldId } = config.classroom;
+
+          const validNames = config.statuses.map(s => s.name);
+          const status = config.statuses.find(s => s.name === process.env.TARGET_STATUS);
+          const optionId = status?.optionId;
+          if (!optionId) {
+            core.setFailed(`Unknown status: "${process.env.TARGET_STATUS}". Valid values: ${validNames.join(', ')}`);
+            return;
+          }
+
+          const result = await github.graphql(`
+            query($issueId: ID!) {
+              node(id: $issueId) {
+                ... on Issue {
+                  projectItems(first: 10) {
+                    nodes {
+                      id
+                      project { id }
+                    }
+                  }
+                }
+              }
+            }
+          `, { issueId: process.env.ISSUE_NODE_ID });
+
+          const item = result.node.projectItems.nodes.find(n => n.project.id === projectId);
+          if (!item) {
+            core.warning('Issue not found on project board');
+            return;
+          }
+
+          await github.graphql(`
+            mutation($projectId: ID!, $itemId: ID!, $fieldId: ID!, $optionId: String!) {
+              updateProjectV2ItemFieldValue(input: {
+                projectId: $projectId
+                itemId: $itemId
+                fieldId: $fieldId
+                value: { singleSelectOptionId: $optionId }
+              }) {
+                projectV2Item { id }
+              }
+            }
+          `, { projectId, itemId: item.id, fieldId: statusFieldId, optionId });

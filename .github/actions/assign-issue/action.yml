@@ -1,0 +1,25 @@
+name: Assign Issue
+description: Assigns team members to an issue.
+
+inputs:
+  issue-number:
+    description: The issue number.
+    required: true
+  assignees:
+    description: Comma-separated list of GitHub usernames.
+    required: true
+
+runs:
+  using: composite
+  steps:
+    - name: Assign
+      uses: actions/github-script@v8
+      with:
+        script: |
+          const assignees = '${{ inputs.assignees }}'.split(',');
+          await github.rest.issues.addAssignees({
+            owner: context.repo.owner,
+            repo: context.repo.repo,
+            issue_number: ${{ inputs.issue-number }},
+            assignees
+          });

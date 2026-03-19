@@ -1,0 +1,50 @@
+name: "Module Review"
+description: "Submit your sandbox project for review"
+title: ""
+labels: ["review"]
+body:
+  - type: dropdown
+    id: project
+    attributes:
+      label: Project
+      description: Select your project.
+      options:
+        - eShop
+        - Car Charging Reservation System
+        - Budget OK
+        - CTF
+        - Ghibli Encyclopedia
+        - Veg Finder
+        - Flight Reservation System (FRS)
+        - Event Sourcing Learning Application
+        - Project Powerhouse
+    validations:
+      required: true
+  - type: dropdown
+    id: module
+    attributes:
+      label: Module
+      description: Select the module you are submitting for review.
+      options:
+        - 01 - Introduction
+        - 02 - Smoke Tests
+        - 03 - E2E Tests
+        - 04 - Architecture - Clients
+        - 05 - Architecture - Drivers
+        - 06 - Architecture - Channels
+        - 07 - Architecture - App DSL
+        - 08 - Architecture - Scenario DSL
+        - 09 - Architecture - External Stubs
+        - 10 - Acceptance Tests
+        - 11 - External System Contract Tests
+        - 12 - ATDD - Acceptance Criteria
+        - 13 - ATDD - Acceptance Tests
+        - 14 - ATDD - External System Contract Tests
+        - 15 - Structural Changes
+    validations:
+      required: true
+  - type: markdown
+    attributes:
+      value: |
+        ## Review Checklist
+        *This section will be auto-generated after submission.*

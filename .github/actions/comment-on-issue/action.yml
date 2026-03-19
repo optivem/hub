@@ -1,0 +1,26 @@
+name: Comment on Issue
+description: Posts a comment on an issue.
+
+inputs:
+  issue-number:
+    description: The issue number.
+    required: true
+  body:
+    description: The comment body (markdown).
+    required: true
+
+runs:
+  using: composite
+  steps:
+    - name: Post comment
+      uses: actions/github-script@v8
+      env:
+        INPUT_BODY: ${{ inputs.body }}
+      with:
+        script: |
+          await github.rest.issues.createComment({
+            owner: context.repo.owner,
+            repo: context.repo.repo,
+            issue_number: ${{ inputs.issue-number }},
+            body: process.env.INPUT_BODY
+          });

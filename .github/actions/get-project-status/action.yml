@@ -1,0 +1,64 @@
+name: Get Project Status
+description: Gets the current status of an issue on the GitHub Project board.
+
+inputs:
+  issue-node-id:
+    description: The GraphQL node ID of the issue.
+    required: true
+  github-token:
+    description: Token with project read access.
+    required: true
+
+outputs:
+  status:
+    description: The current status name (e.g. Open, In Review, In Progress, Done).
+    value: ${{ steps.get.outputs.status }}
+  item-id:
+    description: The project item ID.
+    value: ${{ steps.get.outputs.item_id }}
+
+runs:
+  using: composite
+  steps:
+    - name: Get status
+      id: get
+      uses: actions/github-script@v8
+      env:
+        GH_TOKEN: ${{ inputs.github-token }}
+        ISSUE_NODE_ID: ${{ inputs.issue-node-id }}
+      with:
+        github-token: ${{ inputs.github-token }}
+        script: |
+          const fs = require('fs');
+          const config = JSON.parse(fs.readFileSync('config.json', 'utf8'));
+          const projectId = config.classroom.id;
+
+          const result = await github.graphql(`
+            query($issueId: ID!) {
+              node(id: $issueId) {
+                ... on Issue {
+                  projectItems(first: 10) {
+                    nodes {
+                      id
+                      project { id }
+                      fieldValueByName(name: "Status") {
+                        ... on ProjectV2ItemFieldSingleSelectValue {
+                          name
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          `, { issueId: process.env.ISSUE_NODE_ID });
+
+          const item = result.node.projectItems.nodes.find(n => n.project.id === projectId);
+          if (!item) {
+            core.setOutput('status', '');
+            core.setOutput('item_id', '');
+            return;
+          }
+
+          core.setOutput('status', item.fieldValueByName?.name || '');
+          core.setOutput('item_id', item.id);

@@ -1,0 +1,21 @@
+name: Reopen Issue
+description: Reopens a closed issue.
+
+inputs:
+  issue-number:
+    description: The issue number.
+    required: true
+
+runs:
+  using: composite
+  steps:
+    - name: Reopen
+      uses: actions/github-script@v8
+      with:
+        script: |
+          await github.rest.issues.update({
+            owner: context.repo.owner,
+            repo: context.repo.repo,
+            issue_number: ${{ inputs.issue-number }},
+            state: 'open'
+          });

@@ -1,0 +1,68 @@
+name: Set Issue Type
+description: Sets the type (Task, Bug, etc.) on an issue via GraphQL.
+
+inputs:
+  issue-node-id:
+    description: The node ID of the issue.
+    required: true
+  type:
+    description: "The type name to set (e.g. Task, Bug, Feature)."
+    required: true
+  github-token:
+    description: GitHub token with issue write permission.
+    required: false
+    default: ${{ github.token }}
+
+runs:
+  using: composite
+  steps:
+    - name: Set issue type
+      uses: actions/github-script@v8
+      env:
+        ISSUE_NODE_ID: ${{ inputs.issue-node-id }}
+        TYPE_NAME: ${{ inputs.type }}
+        GH_TOKEN: ${{ inputs.github-token }}
+      with:
+        github-token: ${{ inputs.github-token }}
+        script: |
+          const issueNodeId = process.env.ISSUE_NODE_ID;
+          const typeName = process.env.TYPE_NAME;
+
+          // Fetch available issue types for the repo
+          const query = `query($owner: String!, $repo: String!) {
+            repository(owner: $owner, name: $repo) {
+              issueTypes {
+                nodes {
+                  id
+                  name
+                }
+              }
+            }
+          }`;
+
+          const result = await github.graphql(query, {
+            owner: context.repo.owner,
+            repo: context.repo.repo
+          });
+
+          const types = result.repository.issueTypes.nodes;
+          const match = types.find(t => t.name.toLowerCase() === typeName.toLowerCase());
+
+          if (!match) {
+            core.warning(`Issue type "${typeName}" not found. Available: ${types.map(t => t.name).join(', ')}`);
+            return;
+          }
+
+          // Set the type on the issue
+          const mutation = `mutation($issueId: ID!, $typeId: ID!) {
+            updateIssue(input: { id: $issueId, issueTypeId: $typeId }) {
+              issue { id }
+            }
+          }`;
+
+          await github.graphql(mutation, {
+            issueId: issueNodeId,
+            typeId: match.id
+          });
+
+          core.info(`Set issue type to "${typeName}"`);

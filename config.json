@@ -1,0 +1,60 @@
+{
+  "classroom": {
+    "id": "PVT_kwDOAMwK8c4BSMdA",
+    "url": "https://github.com/orgs/optivem/projects/18",
+    "statusFieldId": "PVTSSF_lADOAMwK8c4BSMdAzg_zO2I"
+  },
+  "statuses": [
+    { "key": "IN_REVIEW", "name": "In Review", "optionId": "a2132c0f" },
+    { "key": "IN_PROGRESS", "name": "In Progress", "optionId": "6b6a9601" },
+    { "key": "DONE", "name": "Done", "optionId": "d5e37461" }
+  ],
+  "modules": [
+    { "number": "01", "name": "Introduction", "url": "https://optivem.thinkific.com/courses/take/atdd/texts/73673632-sandbox-project" },
+    { "number": "02", "name": "Smoke Tests", "url": "https://optivem.thinkific.com/courses/take/atdd/texts/73673638-sandbox-project" },
+    { "number": "03", "name": "E2E Tests", "url": "https://optivem.thinkific.com/courses/take/atdd/texts/73673661-sandbox-project" },
+    { "number": "04", "name": "Architecture - Clients", "url": "https://optivem.thinkific.com/courses/take/atdd/texts/70102037-sandbox-project" },
+    { "number": "05", "name": "Architecture - Drivers", "url": "https://optivem.thinkific.com/courses/take/atdd/texts/70114441-sandbox-project" },
+    { "number": "06", "name": "Architecture - Channels", "url": "https://optivem.thinkific.com/courses/take/atdd/texts/70114247-sandbox-project" },
+    { "number": "07", "name": "Architecture - App DSL", "url": "https://optivem.thinkific.com/courses/take/atdd/texts/73673684-sandbox-project" },
+    { "number": "08", "name": "Architecture - Scenario DSL", "url": "https://optivem.thinkific.com/courses/take/atdd/texts/73673700-sandbox-project" },
+    { "number": "09", "name": "Architecture - External Stubs", "url": "https://optivem.thinkific.com/courses/take/atdd/texts/73673730-sandbox-project" },
+    { "number": "10", "name": "Acceptance Tests", "url": "https://optivem.thinkific.com/courses/take/atdd/texts/73673737-sandbox-project" },
+    { "number": "11", "name": "External System Contract Tests", "url": "https://optivem.thinkific.com/courses/take/atdd/texts/73620977-sandbox-project" },
+    { "number": "12", "name": "ATDD - Acceptance Criteria", "url": "https://optivem.thinkific.com/courses/take/atdd/texts/73543765-sandbox-project" },
+    { "number": "13", "name": "ATDD - Acceptance Tests", "url": "https://optivem.thinkific.com/courses/take/atdd/texts/73673750-sandbox-project" },
+    { "number": "14", "name": "ATDD - External System Contract Tests", "url": "https://optivem.thinkific.com/courses/take/atdd/texts/73673764-sandbox-project" },
+    { "number": "15", "name": "Structural Changes", "url": "https://optivem.thinkific.com/courses/take/atdd/texts/73673787-sandbox-project" }
+  ],
+  "reviewers": [
+    { "github": "valentinajemuovic", "name": "Valentina Jemuović" }
+  ],
+  "students": [
+    { "github": "jcupac", "name": "Jelena Cupać" },
+    { "github": "longhibeck", "name": "Germanno Longhi Beck" },
+    { "github": "ognjenkl", "name": "Ognjen Klincov" },
+    { "github": "CurlyFire", "name": "Stéphane Denommé" },
+    { "github": "RomainChamb", "name": "Romain Chambonnier" },
+    { "github": "jasonribble", "name": "Jason Ribble" },
+    { "github": "anilvv1", "name": "Anil Valevate" },
+    { "github": "david-oc-miller", "name": "David Miller" },
+    { "github": "ndeleva-armedia", "name": "Nadica Deleva" },
+    { "github": "sowmiya-thoguluva", "name": "Sowmiya Thoguluva" },
+    { "github": "Andrijana-N", "name": "Andrijana Narashanova" },
+    { "github": "astevanovski", "name": "Aleksandar Stevanovski" },
+    { "github": "gerasovskiboris", "name": "Boris Gerasovski" },
+    { "github": "anatrajkovskaarmedia", "name": "Ana-Marija Trajkovska" },
+    { "github": "vilosia-ai", "name": "Florian Aurich" }
+  ],
+  "projects": [
+    { "key": "ESHP", "name": "eShop", "repo": "https://github.com/optivem/eshop", "lead": "valentinajemuovic", "members": ["valentinajemuovic", "jcupac"] },
+    { "key": "CCRS", "name": "Car Charging Reservation System", "repo": "https://github.com/longhibeck/car-charging-reservation-system", "lead": "longhibeck", "members": ["longhibeck"] },
+    { "key": "BDOK", "name": "Budget OK", "repo": "https://github.com/ognjenkl/budget-ok", "lead": "ognjenkl", "members": ["ognjenkl"] },
+    { "key": "CTF", "name": "CTF", "repo": "https://github.com/CurlyFire/ctf-sandbox", "lead": "CurlyFire", "members": ["CurlyFire"] },
+    { "key": "GHBL", "name": "Ghibli Encyclopedia", "repo": "https://github.com/RomainChamb/ghibli-encyclopedia", "lead": "RomainChamb", "members": ["RomainChamb"] },
+    { "key": "VGFN", "name": "Veg Finder", "repo": "https://github.com/jasonribble/veg-finder", "lead": "jasonribble", "members": ["jasonribble"] },
+    { "key": "FRS", "name": "Flight Reservation System (FRS)", "repo": "https://github.com/ArkCase/atdd-flight-reserve", "lead": "anilvv1", "members": ["anilvv1", "david-oc-miller", "ndeleva-armedia", "sowmiya-thoguluva", "Andrijana-N", "astevanovski", "gerasovskiboris", "anatrajkovskaarmedia"] },
+    { "key": "ESLA", "name": "Event Sourcing Learning Application", "repo": "https://github.com/david-oc-miller/event-sourcing-demo", "lead": "david-oc-miller", "members": ["david-oc-miller"] },
+    { "key": "PWRH", "name": "Project Powerhouse", "repo": "https://github.com/vilosia-ai/demo-customer-portal", "lead": "vilosia-ai", "members": ["vilosia-ai"] }
+  ]
+}

@@ -1,0 +1,29 @@
+name: auto-on-reopened
+
+on:
+  issues:
+    types: [reopened]
+
+jobs:
+  set-open:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+
+      - name: Wait for comment workflow to finish
+        run: sleep 30
+
+      - name: Get current status
+        id: current
+        uses: ./.github/actions/get-project-status
+        with:
+          issue-node-id: ${{ github.event.issue.node_id }}
+          github-token: ${{ secrets.PROJECT_TOKEN }}
+
+      - name: Set status to In Review if not already handled
+        if: steps.current.outputs.status != 'In Progress' && steps.current.outputs.status != 'In Review'
+        uses: ./.github/actions/set-project-status
+        with:
+          issue-node-id: ${{ github.event.issue.node_id }}
+          status: In Review
+          github-token: ${{ secrets.PROJECT_TOKEN }}

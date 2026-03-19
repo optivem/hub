@@ -1,0 +1,27 @@
+name: Check User Role
+description: Checks if a GitHub user is a reviewer or project member.
+
+inputs:
+  username:
+    description: The GitHub username to check.
+    required: true
+
+outputs:
+  is-reviewer:
+    description: "'true' if the user is a reviewer."
+    value: ${{ steps.check.outputs.is_reviewer }}
+
+runs:
+  using: composite
+  steps:
+    - name: Check role
+      id: check
+      uses: actions/github-script@v8
+      with:
+        script: |
+          const fs = require('fs');
+          const data = JSON.parse(fs.readFileSync('config.json', 'utf8'));
+          const username = '${{ inputs.username }}'.toLowerCase();
+          const isBot = username.endsWith('[bot]');
+          const isReviewer = isBot || data.reviewers.some(r => r.github.toLowerCase() === username);
+          core.setOutput('is_reviewer', isReviewer ? 'true' : 'false');

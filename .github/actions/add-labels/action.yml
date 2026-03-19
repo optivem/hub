@@ -1,0 +1,38 @@
+name: Add Labels
+description: Creates labels if needed and adds them to an issue.
+
+inputs:
+  issue-number:
+    description: The issue number.
+    required: true
+  labels:
+    description: Comma-separated list of label names.
+    required: true
+
+runs:
+  using: composite
+  steps:
+    - name: Create and add labels
+      uses: actions/github-script@v8
+      with:
+        script: |
+          const labels = '${{ inputs.labels }}'.split(',').map(l => l.trim().toLowerCase());
+
+          for (const label of labels) {
+            try {
+              await github.rest.issues.createLabel({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                name: label
+              });
+            } catch (e) {
+              // Label already exists — ignore
+            }
+          }
+
+          await github.rest.issues.addLabels({
+            owner: context.repo.owner,
+            repo: context.repo.repo,
+            issue_number: ${{ inputs.issue-number }},
+            labels
+          });

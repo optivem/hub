@@ -1,0 +1,24 @@
+name: Remove Assignee
+description: Removes an assignee from an issue.
+
+inputs:
+  issue-number:
+    description: The issue number.
+    required: true
+  assignee:
+    description: The GitHub username to remove.
+    required: true
+
+runs:
+  using: composite
+  steps:
+    - name: Remove assignee
+      uses: actions/github-script@v8
+      with:
+        script: |
+          await github.rest.issues.removeAssignees({
+            owner: context.repo.owner,
+            repo: context.repo.repo,
+            issue_number: ${{ inputs.issue-number }},
+            assignees: ['${{ inputs.assignee }}']
+          });

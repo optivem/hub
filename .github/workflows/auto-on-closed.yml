@@ -1,0 +1,45 @@
+name: auto-on-closed
+
+on:
+  issues:
+    types: [closed]
+
+jobs:
+  handle-close:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+
+      - name: Check who closed the issue
+        id: check
+        uses: ./.github/actions/check-role
+        with:
+          username: ${{ github.event.sender.login }}
+
+      - name: Set status to Done
+        if: steps.check.outputs.is-reviewer == 'true'
+        uses: ./.github/actions/set-project-status
+        with:
+          issue-node-id: ${{ github.event.issue.node_id }}
+          status: Done
+          github-token: ${{ secrets.PROJECT_TOKEN }}
+
+      - name: Post completion comment
+        if: steps.check.outputs.is-reviewer == 'true'
+        uses: ./.github/actions/comment-on-issue
+        with:
+          issue-number: ${{ github.event.issue.number }}
+          body: "🎉 Your Sandbox Project module **${{ github.event.issue.title }}** is **DONE**! The updated status will be shown on the [Dashboard](https://optivem.github.io/atdd-classroom/)."
+
+      - name: Reopen and notify if closed by student
+        if: steps.check.outputs.is-reviewer == 'false'
+        uses: ./.github/actions/comment-on-issue
+        with:
+          issue-number: ${{ github.event.issue.number }}
+          body: "Hi @${{ github.event.sender.login }}, only a reviewer can close a ticket. This issue has been reopened automatically."
+
+      - name: Reopen issue
+        if: steps.check.outputs.is-reviewer == 'false'
+        uses: ./.github/actions/reopen-issue
+        with:
+          issue-number: ${{ github.event.issue.number }}

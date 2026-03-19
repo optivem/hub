@@ -1,0 +1,45 @@
+name: Close Issue
+description: Closes an issue with a comment explaining why.
+
+inputs:
+  issue-number:
+    description: The issue number.
+    required: true
+  body:
+    description: The comment body (markdown).
+    required: true
+  title:
+    description: "New title for the issue (optional)."
+    required: false
+    default: ""
+  state-reason:
+    description: "The close reason (completed or not_planned)."
+    required: false
+    default: not_planned
+
+runs:
+  using: composite
+  steps:
+    - name: Comment and close
+      uses: actions/github-script@v8
+      env:
+        INPUT_BODY: ${{ inputs.body }}
+      with:
+        script: |
+          await github.rest.issues.createComment({
+            owner: context.repo.owner,
+            repo: context.repo.repo,
+            issue_number: ${{ inputs.issue-number }},
+            body: process.env.INPUT_BODY
+          });
+
+          const updateParams = {
+            owner: context.repo.owner,
+            repo: context.repo.repo,
+            issue_number: ${{ inputs.issue-number }},
+            state: 'closed',
+            state_reason: '${{ inputs.state-reason }}'
+          };
+          const newTitle = `${{ inputs.title }}`;
+          if (newTitle) updateParams.title = newTitle;
+          await github.rest.issues.update(updateParams);

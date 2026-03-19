@@ -1,0 +1,27 @@
+name: Set Milestone
+description: Sets or clears the milestone on an issue.
+
+inputs:
+  issue-number:
+    description: The issue number.
+    required: true
+  milestone:
+    description: "The milestone number to set, or empty string to clear."
+    required: false
+    default: ""
+
+runs:
+  using: composite
+  steps:
+    - name: Set milestone
+      uses: actions/github-script@v8
+      with:
+        script: |
+          const milestoneInput = '${{ inputs.milestone }}';
+          const milestone = milestoneInput ? parseInt(milestoneInput, 10) : null;
+          await github.rest.issues.update({
+            owner: context.repo.owner,
+            repo: context.repo.repo,
+            issue_number: ${{ inputs.issue-number }},
+            milestone
+          });

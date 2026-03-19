@@ -1,0 +1,47 @@
+name: auto-on-comment
+
+on:
+  issue_comment:
+    types: [created]
+
+jobs:
+  update-status:
+    if: ${{ !github.event.issue.pull_request }}
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+
+      - name: Check commenter role
+        id: check
+        uses: ./.github/actions/check-role
+        with:
+          username: ${{ github.event.comment.user.login }}
+
+      - name: Get current status
+        id: current
+        uses: ./.github/actions/get-project-status
+        with:
+          issue-node-id: ${{ github.event.issue.node_id }}
+          github-token: ${{ secrets.PROJECT_TOKEN }}
+
+      - name: Reopen issue if closed by student comment
+        if: steps.check.outputs.is-reviewer == 'false' && github.event.issue.state == 'closed'
+        uses: ./.github/actions/reopen-issue
+        with:
+          issue-number: ${{ github.event.issue.number }}
+
+      - name: Set In Review on student comment
+        if: steps.check.outputs.is-reviewer == 'false' && steps.current.outputs.status != 'In Review'
+        uses: ./.github/actions/set-project-status
+        with:
+          issue-node-id: ${{ github.event.issue.node_id }}
+          status: In Review
+          github-token: ${{ secrets.PROJECT_TOKEN }}
+
+      - name: Set In Progress on reviewer comment
+        if: steps.check.outputs.is-reviewer == 'true' && github.event.issue.state != 'closed' && steps.current.outputs.status != 'In Progress'
+        uses: ./.github/actions/set-project-status
+        with:
+          issue-node-id: ${{ github.event.issue.node_id }}
+          status: In Progress
+          github-token: ${{ secrets.PROJECT_TOKEN }}

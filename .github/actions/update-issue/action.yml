@@ -1,0 +1,54 @@
+name: Update Issue
+description: Updates an issue title and body with project overview and checklist.
+
+inputs:
+  issue-number:
+    description: The issue number.
+    required: true
+  project-key:
+    description: The project key (e.g. ESHP).
+    required: true
+  project-name:
+    description: The project name.
+    required: true
+  repo-url:
+    description: The project repository URL.
+    required: true
+  module:
+    description: The selected module string (e.g. "02 - Smoke Tests").
+    required: true
+
+runs:
+  using: composite
+  steps:
+    - name: Update title and body
+      uses: actions/github-script@v8
+      with:
+        script: |
+          const fs = require('fs');
+          const projectKey = '${{ inputs.project-key }}';
+          const projectName = '${{ inputs.project-name }}';
+          const repoUrl = '${{ inputs.repo-url }}';
+          const selectedModule = '${{ inputs.module }}';
+          const moduleNum = selectedModule.split(' - ')[0];
+
+          const newTitle = `${projectKey} | ${selectedModule}`;
+
+          let body = `## Overview\n\n`;
+          body += `**Project Name:** ${projectName}\n`;
+          body += `**Project Repository:** ${repoUrl}\n`;
+          body += `**Module:** ${selectedModule}\n`;
+
+          const checklistPath = `checklists/${moduleNum}.md`;
+          if (fs.existsSync(checklistPath)) {
+            const checklist = fs.readFileSync(checklistPath, 'utf8').trim();
+            body += `\n## Review Checklist\n\n${checklist}`;
+          }
+
+          await github.rest.issues.update({
+            owner: context.repo.owner,
+            repo: context.repo.repo,
+            issue_number: ${{ inputs.issue-number }},
+            title: newTitle,
+            body
+          });

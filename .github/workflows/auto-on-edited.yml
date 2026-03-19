@@ -1,0 +1,95 @@
+name: auto-on-edited
+
+on:
+  issues:
+    types: [labeled, unlabeled, assigned, unassigned, milestoned, demilestoned]
+
+jobs:
+  guard:
+    if: github.event.sender.type != 'Bot'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+
+      - name: Revert label added
+        if: github.event.action == 'labeled'
+        uses: ./.github/actions/remove-label
+        with:
+          issue-number: ${{ github.event.issue.number }}
+          label: ${{ github.event.label.name }}
+
+      - name: Revert label removed
+        if: github.event.action == 'unlabeled'
+        uses: ./.github/actions/add-label
+        with:
+          issue-number: ${{ github.event.issue.number }}
+          label: ${{ github.event.label.name }}
+
+      - name: Revert assignee added
+        if: github.event.action == 'assigned'
+        uses: ./.github/actions/remove-assignee
+        with:
+          issue-number: ${{ github.event.issue.number }}
+          assignee: ${{ github.event.assignee.login }}
+
+      - name: Revert assignee removed
+        if: github.event.action == 'unassigned'
+        uses: ./.github/actions/add-assignee
+        with:
+          issue-number: ${{ github.event.issue.number }}
+          assignee: ${{ github.event.assignee.login }}
+
+      - name: Revert milestone added
+        if: github.event.action == 'milestoned'
+        uses: ./.github/actions/set-milestone
+        with:
+          issue-number: ${{ github.event.issue.number }}
+
+      - name: Revert milestone removed
+        if: github.event.action == 'demilestoned'
+        uses: ./.github/actions/set-milestone
+        with:
+          issue-number: ${{ github.event.issue.number }}
+          milestone: ${{ github.event.milestone.number }}
+
+      - name: Warn - label added
+        if: github.event.action == 'labeled'
+        uses: ./.github/actions/comment-on-issue
+        with:
+          issue-number: ${{ github.event.issue.number }}
+          body: "> [!WARNING]\n> @${{ github.event.sender.login }}, you added the label **${{ github.event.label.name }}**. Labels are managed automatically — your change has been reverted."
+
+      - name: Warn - label removed
+        if: github.event.action == 'unlabeled'
+        uses: ./.github/actions/comment-on-issue
+        with:
+          issue-number: ${{ github.event.issue.number }}
+          body: "> [!WARNING]\n> @${{ github.event.sender.login }}, you removed the label **${{ github.event.label.name }}**. Labels are managed automatically — your change has been reverted."
+
+      - name: Warn - assignee added
+        if: github.event.action == 'assigned'
+        uses: ./.github/actions/comment-on-issue
+        with:
+          issue-number: ${{ github.event.issue.number }}
+          body: "> [!WARNING]\n> @${{ github.event.sender.login }}, you assigned **@${{ github.event.assignee.login }}**. Assignees are managed automatically — your change has been reverted."
+
+      - name: Warn - assignee removed
+        if: github.event.action == 'unassigned'
+        uses: ./.github/actions/comment-on-issue
+        with:
+          issue-number: ${{ github.event.issue.number }}
+          body: "> [!WARNING]\n> @${{ github.event.sender.login }}, you unassigned **@${{ github.event.assignee.login }}**. Assignees are managed automatically — your change has been reverted."
+
+      - name: Warn - milestone added
+        if: github.event.action == 'milestoned'
+        uses: ./.github/actions/comment-on-issue
+        with:
+          issue-number: ${{ github.event.issue.number }}
+          body: "> [!WARNING]\n> @${{ github.event.sender.login }}, you set the milestone to **${{ github.event.milestone.title }}**. Milestones are managed automatically — your change has been reverted."
+
+      - name: Warn - milestone removed
+        if: github.event.action == 'demilestoned'
+        uses: ./.github/actions/comment-on-issue
+        with:
+          issue-number: ${{ github.event.issue.number }}
+          body: "> [!WARNING]\n> @${{ github.event.sender.login }}, you removed the milestone **${{ github.event.milestone.title }}**. Milestones are managed automatically — your change has been reverted."
