@@ -278,6 +278,7 @@ ${moduleItems}
     .replace("{{CARDS}}", cards)
     .replace("{{MODULE_LEGEND}}", moduleLegend)
     .replace("{{CLASSROOM_URL}}", escapeHtml(config.classroom.url))
+    .replaceAll("{{BOOTCAMP_NAME}}", escapeHtml(config.name))
     .replaceAll("{{GITHUB_OWNER}}", GITHUB_OWNER)
     .replaceAll("{{GITHUB_REPO}}", GITHUB_REPO);
 }
