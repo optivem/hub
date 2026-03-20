@@ -19,6 +19,23 @@ if (!GITHUB_TOKEN || !GITHUB_OWNER || !GITHUB_REPO) {
 const config = JSON.parse(readFileSync(join(ROOT, "config.json"), "utf-8"));
 const boardId = config.board.id;
 
+// Map project key (uppercase) → project object
+const projectMap = {};
+for (const p of config.projects) {
+  projectMap[p.key.toUpperCase()] = p;
+}
+
+// Resolve bootcamp projectKeys into full project objects
+for (const bootcamp of config.bootcamps) {
+  bootcamp.projects = (bootcamp.projectKeys || []).map((key) => {
+    const proj = projectMap[key.toUpperCase()];
+    if (!proj) {
+      console.warn(`Warning: [${bootcamp.name}] projectKey "${key}" not found in top-level projects — skipping`);
+    }
+    return proj;
+  }).filter(Boolean);
+}
+
 // Map GitHub username (lowercase) → display name
 const nameMap = {};
 for (const r of config.reviewers) {

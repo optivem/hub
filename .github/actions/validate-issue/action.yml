@@ -68,18 +68,8 @@ runs:
 
           const isReviewer = data.reviewers.some(r => r.github.toLowerCase() === creator.toLowerCase());
 
-          // Search across all bootcamps for the project
-          let team = null;
-          let bootcampId = '';
-          for (const bootcamp of data.bootcamps) {
-            const found = (bootcamp.projects || []).find(t => t.name === selectedProject);
-            if (found) {
-              team = found;
-              bootcampId = bootcamp.id;
-              break;
-            }
-          }
-
+          // Find project in top-level projects list
+          const team = data.projects.find(t => t.name === selectedProject);
           if (!team) {
             core.setOutput('is_valid', 'false');
             return;
@@ -91,11 +81,26 @@ runs:
             return;
           }
 
+          // Find which bootcamp this project belongs to
+          const moduleNum = selectedModule.split(' - ')[0];
+          let bootcampId = '';
+          for (const bootcamp of data.bootcamps) {
+            const keys = (bootcamp.projectKeys || []).map(k => k.toUpperCase());
+            if (keys.includes(team.key.toUpperCase())) {
+              // Verify the module exists in this bootcamp
+              const hasModule = bootcamp.modules.some(m => m.number === moduleNum);
+              if (hasModule) {
+                bootcampId = bootcamp.id;
+                break;
+              }
+            }
+          }
+
           core.setOutput('is_valid', 'true');
           core.setOutput('project_url', data.board.url);
           core.setOutput('project_name', team.name);
           core.setOutput('project_key', team.key);
           core.setOutput('repo_url', team.repo);
-          core.setOutput('module_num', selectedModule.split(' - ')[0]);
+          core.setOutput('module_num', moduleNum);
           core.setOutput('assignees', team.members.join(','));
           core.setOutput('bootcamp_id', bootcampId);
