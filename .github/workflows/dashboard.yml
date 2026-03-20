@@ -1,6 +1,8 @@
 name: dashboard
 
 on:
+  push:
+    branches: [main]
   issues:
     types: [opened, closed, reopened, labeled, unlabeled]
   schedule:
