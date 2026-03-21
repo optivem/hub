@@ -40,6 +40,39 @@ for (const bootcamp of config.bootcamps) {
     .filter(Boolean);
 }
 
+function validateConfig() {
+  const errors = [];
+  for (const bc of config.bootcamps) {
+    if (!bc.id) errors.push(`Bootcamp missing "id".`);
+    if (!bc.name) errors.push(`Bootcamp missing "name".`);
+    for (const key of bc.projectKeys || []) {
+      if (!projectMap[key.toUpperCase()]) errors.push(`Bootcamp "${bc.id}": projectKey "${key}" does not match any project.`);
+    }
+    const moduleNums = new Set();
+    for (const m of bc.modules || []) {
+      if (m.number == null) errors.push(`Bootcamp "${bc.id}": module missing "number".`);
+      if (!m.name) errors.push(`Bootcamp "${bc.id}": module missing "name".`);
+      if (!m.tasks || m.tasks.length === 0) errors.push(`Bootcamp "${bc.id}": module ${m.number} has no tasks.`);
+      if (m.number != null && moduleNums.has(m.number)) errors.push(`Bootcamp "${bc.id}": duplicate module number ${m.number}.`);
+      moduleNums.add(m.number);
+      const taskNums = new Set();
+      for (const t of m.tasks || []) {
+        if (t.number == null) errors.push(`Bootcamp "${bc.id}": module ${m.number}: task missing "number".`);
+        if (!t.name) errors.push(`Bootcamp "${bc.id}": module ${m.number}: task missing "name".`);
+        if (t.number != null && taskNums.has(t.number)) errors.push(`Bootcamp "${bc.id}": module ${m.number}: duplicate task number ${t.number}.`);
+        taskNums.add(t.number);
+      }
+    }
+  }
+  if (errors.length > 0) {
+    console.error("Config validation failed:");
+    for (const e of errors) console.error(`  - ${e}`);
+    process.exit(1);
+  }
+}
+
+validateConfig();
+
 // ── Helpers ──
 
 function escapeHtml(str) {
