@@ -45,8 +45,13 @@ runs:
           const bootcamp = config.bootcamps.find(b => b.id === bootcampId);
           const bootcampName = bootcamp ? bootcamp.name : bootcampId;
 
-          const taskSuffix = selectedTask ? ` | ${selectedTask}` : '';
-          const newTitle = `${projectKey} | ${bootcampName} | ${selectedModule}${taskSuffix}`;
+          const taskName = selectedTask ? selectedTask.replace(/^\d+\s*-\s*/, '') : '';
+          const compositeId = selectedTask
+            ? `${projectKey}-${bootcampId.toUpperCase()}-${moduleNum}.${taskNum}`
+            : `${projectKey}-${bootcampId.toUpperCase()}-${moduleNum}`;
+          const newTitle = selectedTask
+            ? `${compositeId} | ${taskName}`
+            : `${compositeId} | ${selectedModule}`;
 
           let body = `## Overview\n\n`;
           body += `**Project Name:** [${projectName}](${repoUrl})\n`;
