@@ -134,8 +134,8 @@ function buildMatrix(issues, bootcamp) {
   for (const issue of issues) {
     const labels = issue.labels.nodes.map((l) => l.name);
     const bootcampLabel = labels.find((l) => /^bootcamp-/.test(l));
-    const moduleLabel = labels.find((l) => /^module-\d{2}$/.test(l));
-    const taskLabel = labels.find((l) => /^task-\d{2}$/.test(l));
+    const moduleLabel = labels.find((l) => /^module-\d+$/.test(l));
+    const taskLabel = labels.find((l) => /^task-\d+$/.test(l));
     const projectLabel = labels.find((l) => /^project-/.test(l));
 
     if (bootcampLabel !== `bootcamp-${bootcamp.id}`) continue;
