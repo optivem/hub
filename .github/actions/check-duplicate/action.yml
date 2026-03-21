@@ -11,6 +11,9 @@ inputs:
   module-num:
     description: The module number (e.g. "13").
     required: true
+  task-num:
+    description: The task number within the module (e.g. "02").
+    required: true
   bootcamp-id:
     description: The bootcamp id (e.g. "atdd", "pipeline").
     required: true
@@ -38,11 +41,14 @@ runs:
           const projectLabel = 'project-${{ inputs.project-key }}';
           const bootcampLabel = 'bootcamp-${{ inputs.bootcamp-id }}';
           const moduleLabel = 'module-${{ inputs.module-num }}';
+          const taskLabel = 'task-${{ inputs.task-num }}';
+
+          const labelList = [projectLabel, bootcampLabel, moduleLabel, taskLabel].filter(l => !l.endsWith('-')).join(',');
 
           const issues = await github.rest.issues.listForRepo({
             owner: context.repo.owner,
             repo: context.repo.repo,
-            labels: `${projectLabel},${bootcampLabel},${moduleLabel}`,
+            labels: labelList,
             state: 'all',
             per_page: 100
           });

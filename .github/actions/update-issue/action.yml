@@ -17,6 +17,9 @@ inputs:
   module:
     description: The selected module string (e.g. "02 - Smoke Tests").
     required: true
+  task:
+    description: The selected task string (e.g. "01 - API Smoke Tests").
+    required: false
   bootcamp-id:
     description: The bootcamp id (e.g. "atdd", "pipeline").
     required: true
@@ -33,20 +36,28 @@ runs:
           const projectName = '${{ inputs.project-name }}';
           const repoUrl = '${{ inputs.repo-url }}';
           const selectedModule = '${{ inputs.module }}';
+          const selectedTask = '${{ inputs.task }}';
           const moduleNum = selectedModule.split(' - ')[0];
+          const taskNum = selectedTask ? selectedTask.split(' - ')[0] : '';
 
           const bootcampId = '${{ inputs.bootcamp-id }}';
           const config = JSON.parse(fs.readFileSync('config.json', 'utf8'));
           const bootcamp = config.bootcamps.find(b => b.id === bootcampId);
           const bootcampName = bootcamp ? bootcamp.name : bootcampId;
 
-          const newTitle = `${projectKey} | ${bootcampName} | ${selectedModule}`;
+          const taskSuffix = selectedTask ? ` | ${selectedTask}` : '';
+          const newTitle = `${projectKey} | ${bootcampName} | ${selectedModule}${taskSuffix}`;
 
           let body = `## Overview\n\n`;
           body += `**Project Name:** [${projectName}](${repoUrl})\n`;
           body += `**Bootcamp:** ${bootcampName}\n`;
           body += `**Module:** ${selectedModule}\n`;
-          const checklistPath = `checklists/${bootcampId}/${moduleNum}.md`;
+          if (selectedTask) {
+            body += `**Task:** ${selectedTask}\n`;
+          }
+          const checklistPath = selectedTask
+            ? `checklists/${bootcampId}/${moduleNum}/${taskNum}.md`
+            : `checklists/${bootcampId}/${moduleNum}.md`;
           if (fs.existsSync(checklistPath)) {
             const checklist = fs.readFileSync(checklistPath, 'utf8').trim();
             body += `\n## Review Checklist\n\n${checklist}`;

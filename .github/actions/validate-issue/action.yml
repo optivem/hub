@@ -31,6 +31,12 @@ outputs:
   module-num:
     description: The module number (e.g. "02").
     value: ${{ steps.validate.outputs.module_num }}
+  task:
+    description: The selected task string.
+    value: ${{ steps.validate.outputs.task }}
+  task-num:
+    description: The task number (e.g. "03").
+    value: ${{ steps.validate.outputs.task_num }}
   assignees:
     description: Comma-separated list of team member GitHub usernames.
     value: ${{ steps.validate.outputs.assignees }}
@@ -57,6 +63,10 @@ runs:
           const moduleMatch = body.match(/### Module\s*\n\s*(.+)/);
           const selectedModule = moduleMatch ? moduleMatch[1].trim() : '';
           core.setOutput('module', selectedModule);
+
+          const taskMatch = body.match(/### Task\s*\n\s*(.+)/);
+          const selectedTask = taskMatch ? taskMatch[1].trim() : '';
+          core.setOutput('task', selectedTask);
 
           const projectMatch = body.match(/### Project\s*\n\s*(.+)/);
           const selectedProject = projectMatch ? projectMatch[1].trim() : '';
@@ -109,6 +119,8 @@ runs:
           core.setOutput('project_name', team.name);
           core.setOutput('project_key', team.key);
           core.setOutput('repo_url', team.repo);
+          const taskNum = selectedTask ? selectedTask.split(' - ')[0] : '';
           core.setOutput('module_num', moduleNum);
+          core.setOutput('task_num', taskNum);
           core.setOutput('assignees', team.members.join(','));
           core.setOutput('bootcamp_id', bootcampId);

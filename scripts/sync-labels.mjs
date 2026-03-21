@@ -15,6 +15,7 @@ const COLORS = {
   bootcamp: "5319e7",  // purple
   project: "0075ca",   // blue
   module: "e4e669",    // yellow
+  task: "c5def5",      // light blue
 };
 
 // Build expected labels from config
@@ -29,13 +30,20 @@ for (const p of config.projects) {
 }
 
 const moduleNums = new Set();
+const taskNums = new Set();
 for (const b of config.bootcamps) {
   for (const m of b.modules) {
     moduleNums.add(m.number);
+    for (const t of (m.tasks || [])) {
+      taskNums.add(t.number);
+    }
   }
 }
 for (const num of moduleNums) {
   expected.set(`module-${num}`, COLORS.module);
+}
+for (const num of taskNums) {
+  expected.set(`task-${num}`, COLORS.task);
 }
 
 // Fetch existing labels

@@ -37,6 +37,7 @@ jobs:
           issue-number: ${{ github.event.issue.number }}
           project-key: ${{ steps.validate.outputs.project-key }}
           module-num: ${{ steps.validate.outputs.module-num }}
+          task-num: ${{ steps.validate.outputs.task-num }}
           bootcamp-id: ${{ steps.validate.outputs.bootcamp-id }}
 
       - name: Close duplicate issue
@@ -80,14 +81,15 @@ jobs:
           project-name: ${{ steps.validate.outputs.project-name }}
           repo-url: ${{ steps.validate.outputs.repo-url }}
           module: ${{ steps.validate.outputs.module }}
+          task: ${{ steps.validate.outputs.task }}
           bootcamp-id: ${{ steps.validate.outputs.bootcamp-id }}
 
-      - name: Add project, bootcamp, and module labels
+      - name: Add project, bootcamp, module, and task labels
         if: steps.validate.outputs.is-valid == 'true' && steps.duplicate.outputs.is-duplicate != 'true'
         uses: ./.github/actions/add-labels
         with:
           issue-number: ${{ github.event.issue.number }}
-          labels: "project-${{ steps.validate.outputs.project-key }}, bootcamp-${{ steps.validate.outputs.bootcamp-id }}, module-${{ steps.validate.outputs.module-num }}"
+          labels: "project-${{ steps.validate.outputs.project-key }}, bootcamp-${{ steps.validate.outputs.bootcamp-id }}, module-${{ steps.validate.outputs.module-num }}, task-${{ steps.validate.outputs.task-num }}"
 
       - name: Set issue type to Task
         if: steps.validate.outputs.is-valid == 'true' && steps.duplicate.outputs.is-duplicate != 'true'

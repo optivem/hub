@@ -1,7 +1,7 @@
 {
   "title": "Optivem Classroom",
   "reviewers": [
-    { "github": "valentinajemuovic", "name": "Valentina Jemuović" }
+    { "github": "valentinajemuovic", "name": "Valentina Jemuovic" }
   ],
   "board": {
     "id": "PVT_kwDOAMwK8c4BSMdA",
@@ -14,10 +14,10 @@
     { "key": "DONE", "name": "Done", "optionId": "d5e37461" }
   ],
   "students": [
-    { "github": "jcupac", "name": "Jelena Cupać" },
+    { "github": "jcupac", "name": "Jelena Cupac" },
     { "github": "longhibeck", "name": "Germanno Longhi Beck" },
     { "github": "ognjenkl", "name": "Ognjen Klincov" },
-    { "github": "CurlyFire", "name": "Stéphane Denommé" },
+    { "github": "CurlyFire", "name": "Stephane Denomme" },
     { "github": "RomainChamb", "name": "Romain Chambonnier" },
     { "github": "jasonribble", "name": "Jason Ribble" },
     { "github": "anilvv1", "name": "Anil Valevate" },
@@ -46,15 +46,71 @@
       "id": "pipeline",
       "name": "Pipeline Bootcamp",
       "modules": [
-        { "number": "01", "name": "Introduction", "url": "" },
-        { "number": "02", "name": "Commit Stage", "url": "" },
-        { "number": "03", "name": "QA Stage", "url": "" },
-        { "number": "04", "name": "Production Stage", "url": "" },
-        { "number": "05", "name": "Acceptance Stage", "url": "" },
-        { "number": "06", "name": "Technical Customization", "url": "" },
-        { "number": "07", "name": "Domain Customization", "url": "" },
-        { "number": "08", "name": "Architecture Customization", "url": "" },
-        { "number": "09", "name": "Extensions", "url": "" }
+        {
+          "number": "01", "name": "Introduction", "url": "",
+          "tasks": [
+            { "number": "01", "name": "Project Repository" },
+            { "number": "02", "name": "Pipeline Template" },
+            { "number": "03", "name": "Project Documentation" },
+            { "number": "04", "name": "Project Ticket Board" },
+            { "number": "05", "name": "Roadmap" }
+          ]
+        },
+        {
+          "number": "02", "name": "Commit Stage", "url": "",
+          "tasks": [
+            { "number": "01", "name": "Commit Stage" }
+          ]
+        },
+        {
+          "number": "03", "name": "QA Stage", "url": "",
+          "tasks": [
+            { "number": "01", "name": "QA Stage" }
+          ]
+        },
+        {
+          "number": "04", "name": "Production Stage", "url": "",
+          "tasks": [
+            { "number": "01", "name": "Production Stage" }
+          ]
+        },
+        {
+          "number": "05", "name": "Acceptance Stage", "url": "",
+          "tasks": [
+            { "number": "01", "name": "Acceptance Stage" }
+          ]
+        },
+        {
+          "number": "06", "name": "Technical Customization", "url": "",
+          "tasks": [
+            { "number": "01", "name": "Languages" },
+            { "number": "02", "name": "Namespaces" }
+          ]
+        },
+        {
+          "number": "07", "name": "Domain Customization", "url": "",
+          "tasks": [
+            { "number": "01", "name": "System Behavior Documentation" },
+            { "number": "02", "name": "Smoke Tests" },
+            { "number": "03", "name": "E2E Tests" }
+          ]
+        },
+        {
+          "number": "08", "name": "Architecture Customization", "url": "",
+          "tasks": [
+            { "number": "01", "name": "System Architecture Documentation" },
+            { "number": "02", "name": "Multi-Component Implementation" },
+            { "number": "03", "name": "Repository Strategy Documentation" },
+            { "number": "04", "name": "Multi-Repository Implementation" },
+            { "number": "05", "name": "Additional Technical Characteristics" }
+          ]
+        },
+        {
+          "number": "09", "name": "Extensions", "url": "",
+          "tasks": [
+            { "number": "01", "name": "Go Further" }
+          ]
+        }
       ],
       "projectKeys": ["ESHP", "CCRS", "BDOK", "CTF", "GHBL", "VGFN", "FRS", "ESLA", "PWRH"]
     },
@@ -62,21 +118,135 @@
       "id": "atdd",
       "name": "ATDD Bootcamp",
       "modules": [
-        { "number": "01", "name": "Introduction", "url": "https://optivem.thinkific.com/courses/take/atdd/texts/73673632-sandbox-project" },
-        { "number": "02", "name": "Smoke Tests", "url": "https://optivem.thinkific.com/courses/take/atdd/texts/73673638-sandbox-project" },
-        { "number": "03", "name": "E2E Tests", "url": "https://optivem.thinkific.com/courses/take/atdd/texts/73673661-sandbox-project" },
-        { "number": "04", "name": "Architecture - Clients", "url": "https://optivem.thinkific.com/courses/take/atdd/texts/70102037-sandbox-project" },
-        { "number": "05", "name": "Architecture - Drivers", "url": "https://optivem.thinkific.com/courses/take/atdd/texts/70114441-sandbox-project" },
-        { "number": "06", "name": "Architecture - Channels", "url": "https://optivem.thinkific.com/courses/take/atdd/texts/70114247-sandbox-project" },
-        { "number": "07", "name": "Architecture - App DSL", "url": "https://optivem.thinkific.com/courses/take/atdd/texts/73673684-sandbox-project" },
-        { "number": "08", "name": "Architecture - Scenario DSL", "url": "https://optivem.thinkific.com/courses/take/atdd/texts/73673700-sandbox-project" },
-        { "number": "09", "name": "Architecture - External Stubs", "url": "https://optivem.thinkific.com/courses/take/atdd/texts/73673730-sandbox-project" },
-        { "number": "10", "name": "Acceptance Tests", "url": "https://optivem.thinkific.com/courses/take/atdd/texts/73673737-sandbox-project" },
-        { "number": "11", "name": "External System Contract Tests", "url": "https://optivem.thinkific.com/courses/take/atdd/texts/73620977-sandbox-project" },
-        { "number": "12", "name": "ATDD - Acceptance Criteria", "url": "https://optivem.thinkific.com/courses/take/atdd/texts/73543765-sandbox-project" },
-        { "number": "13", "name": "ATDD - Acceptance Tests", "url": "https://optivem.thinkific.com/courses/take/atdd/texts/73673750-sandbox-project" },
-        { "number": "14", "name": "ATDD - External System Contract Tests", "url": "https://optivem.thinkific.com/courses/take/atdd/texts/73673764-sandbox-project" },
-        { "number": "15", "name": "Structural Changes", "url": "https://optivem.thinkific.com/courses/take/atdd/texts/73673787-sandbox-project" }
+        {
+          "number": "01", "name": "Introduction", "url": "https://optivem.thinkific.com/courses/take/atdd/texts/73673632-sandbox-project",
+          "tasks": [
+            { "number": "01", "name": "Repository Setup" },
+            { "number": "02", "name": "API CRUD" },
+            { "number": "03", "name": "UI CRUD" },
+            { "number": "04", "name": "External API Dependency" },
+            { "number": "05", "name": "Clock Dependency" },
+            { "number": "06", "name": "Business Logic" },
+            { "number": "07", "name": "Roadmap" }
+          ]
+        },
+        {
+          "number": "02", "name": "Smoke Tests", "url": "https://optivem.thinkific.com/courses/take/atdd/texts/73673638-sandbox-project",
+          "tasks": [
+            { "number": "01", "name": "API Smoke Tests" },
+            { "number": "02", "name": "UI Smoke Tests" },
+            { "number": "03", "name": "External System Smoke Tests" }
+          ]
+        },
+        {
+          "number": "03", "name": "E2E Tests", "url": "https://optivem.thinkific.com/courses/take/atdd/texts/73673661-sandbox-project",
+          "tasks": [
+            { "number": "01", "name": "Positive API Tests" },
+            { "number": "02", "name": "Negative API Tests" },
+            { "number": "03", "name": "Positive UI Tests" },
+            { "number": "04", "name": "Negative UI Tests" },
+            { "number": "05", "name": "Parameterized Tests" },
+            { "number": "06", "name": "External System Limitations" }
+          ]
+        },
+        {
+          "number": "04", "name": "Architecture - Clients", "url": "https://optivem.thinkific.com/courses/take/atdd/texts/70102037-sandbox-project",
+          "tasks": [
+            { "number": "01", "name": "System API Client" },
+            { "number": "02", "name": "System UI Client" },
+            { "number": "03", "name": "External System Clients" },
+            { "number": "04", "name": "E2E API Tests" },
+            { "number": "05", "name": "E2E UI Tests" }
+          ]
+        },
+        {
+          "number": "05", "name": "Architecture - Drivers", "url": "https://optivem.thinkific.com/courses/take/atdd/texts/70114441-sandbox-project",
+          "tasks": [
+            { "number": "01", "name": "Shop API Driver" },
+            { "number": "02", "name": "Shop UI Driver" },
+            { "number": "03", "name": "External System Drivers" },
+            { "number": "04", "name": "E2E API Tests" },
+            { "number": "05", "name": "E2E UI Tests" }
+          ]
+        },
+        {
+          "number": "06", "name": "Architecture - Channels", "url": "https://optivem.thinkific.com/courses/take/atdd/texts/70114247-sandbox-project",
+          "tasks": [
+            { "number": "01", "name": "System Smoke Tests" },
+            { "number": "02", "name": "E2E Tests" }
+          ]
+        },
+        {
+          "number": "07", "name": "Architecture - App DSL", "url": "https://optivem.thinkific.com/courses/take/atdd/texts/73673684-sandbox-project",
+          "tasks": [
+            { "number": "01", "name": "DSL Infrastructure" },
+            { "number": "02", "name": "External System DSLs" },
+            { "number": "03", "name": "Shop Use Cases + Primary E2E Test" },
+            { "number": "04", "name": "Remaining E2E Tests" }
+          ]
+        },
+        {
+          "number": "08", "name": "Architecture - Scenario DSL", "url": "https://optivem.thinkific.com/courses/take/atdd/texts/73673700-sandbox-project",
+          "tasks": [
+            { "number": "01", "name": "Smoke Tests" },
+            { "number": "02", "name": "Given/When/Then Stages + Primary E2E Test" },
+            { "number": "03", "name": "Remaining E2E Tests" }
+          ]
+        },
+        {
+          "number": "09", "name": "Architecture - External Stubs", "url": "https://optivem.thinkific.com/courses/take/atdd/texts/73673730-sandbox-project",
+          "tasks": [
+            { "number": "01", "name": "WireMock Docker Setup" },
+            { "number": "02", "name": "Stub Clients and Drivers" },
+            { "number": "03", "name": "Smoke Tests in Both Modes" }
+          ]
+        },
+        {
+          "number": "10", "name": "Acceptance Tests", "url": "https://optivem.thinkific.com/courses/take/atdd/texts/73673737-sandbox-project",
+          "tasks": [
+            { "number": "01", "name": "Primary Acceptance Tests" },
+            { "number": "02", "name": "Remaining Acceptance Tests" },
+            { "number": "03", "name": "Stub-Only Scenarios" },
+            { "number": "04", "name": "Suite Separation" }
+          ]
+        },
+        {
+          "number": "11", "name": "External System Contract Tests", "url": "https://optivem.thinkific.com/courses/take/atdd/texts/73620977-sandbox-project",
+          "tasks": [
+            { "number": "01", "name": "Real Contract Tests" },
+            { "number": "02", "name": "Stub Contract Tests" },
+            { "number": "03", "name": "E2E Tests Cleanup" }
+          ]
+        },
+        {
+          "number": "12", "name": "ATDD - Acceptance Criteria", "url": "https://optivem.thinkific.com/courses/take/atdd/texts/73543765-sandbox-project",
+          "tasks": [
+            { "number": "01", "name": "Three Amigos Session" },
+            { "number": "02", "name": "Acceptance Criteria" }
+          ]
+        },
+        {
+          "number": "13", "name": "ATDD - Acceptance Tests", "url": "https://optivem.thinkific.com/courses/take/atdd/texts/73673750-sandbox-project",
+          "tasks": [
+            { "number": "01", "name": "RED Phase" },
+            { "number": "02", "name": "GREEN Phase" },
+            { "number": "03", "name": "Bug Fix" }
+          ]
+        },
+        {
+          "number": "14", "name": "ATDD - External System Contract Tests", "url": "https://optivem.thinkific.com/courses/take/atdd/texts/73673764-sandbox-project",
+          "tasks": [
+            { "number": "01", "name": "Contract Test - RED" },
+            { "number": "02", "name": "Contract Test - GREEN" },
+            { "number": "03", "name": "Complete the ATDD Cycle" }
+          ]
+        },
+        {
+          "number": "15", "name": "Structural Changes", "url": "https://optivem.thinkific.com/courses/take/atdd/texts/73673787-sandbox-project",
+          "tasks": [
+            { "number": "01", "name": "UX/UI Redesign" }
+          ]
+        }
       ],
       "projectKeys": ["ESHP", "CCRS", "BDOK", "CTF", "GHBL", "VGFN", "FRS", "ESLA", "PWRH"]
     }
