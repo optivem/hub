@@ -6,7 +6,7 @@
  * (number, label, name). Does NOT touch URLs.
  *
  * Usage: node scripts/sync-course-structure.mjs [courses-root]
- *   courses-root defaults to ../courses (relative to classroom repo root)
+ *   courses-root defaults to ../courses (relative to sandbox repo root)
  */
 
 import { readFileSync, writeFileSync, readdirSync, statSync, existsSync } from "fs";

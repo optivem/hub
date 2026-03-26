@@ -501,7 +501,7 @@ async function main() {
     .replace("{{SUMMARY_TABLE}}", generateSummaryTable(courses, matrices, sortedProjects))
     .replace("{{COURSE_SECTIONS}}", sections.join("\n"))
     .replace("{{COURSE_CARDS}}", cards.join("\n"))
-    .replaceAll("{{CLASSROOM_TITLE}}", escapeHtml(config.title))
+    .replaceAll("{{SANDBOX_TITLE}}", escapeHtml(config.title))
     .replace("{{BOARD_URL}}", escapeHtml(config.board.url))
     .replaceAll("{{GITHUB_OWNER}}", GITHUB_OWNER)
     .replaceAll("{{GITHUB_REPO}}", GITHUB_REPO);

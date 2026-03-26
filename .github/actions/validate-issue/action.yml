@@ -20,7 +20,7 @@ outputs:
     description: The project key.
     value: ${{ steps.validate.outputs.project_key }}
   project-url:
-    description: The classroom project board URL.
+    description: The sandbox project board URL.
     value: ${{ steps.validate.outputs.project_url }}
   repo-url:
     description: The project repository URL.

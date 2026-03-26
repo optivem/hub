@@ -4,7 +4,7 @@ const { join } = require("path");
 function loadConfig(rootDir) {
   const configDir = join(rootDir, "config");
 
-  const classroom = JSON.parse(readFileSync(join(configDir, "classroom.json"), "utf-8"));
+  const sandbox = JSON.parse(readFileSync(join(configDir, "sandbox.json"), "utf-8"));
   const reviewers = JSON.parse(readFileSync(join(configDir, "reviewers.json"), "utf-8"));
   const students = JSON.parse(readFileSync(join(configDir, "students.json"), "utf-8"));
   const projects = JSON.parse(readFileSync(join(configDir, "projects.json"), "utf-8"));
@@ -16,10 +16,10 @@ function loadConfig(rootDir) {
     .map(f => JSON.parse(readFileSync(join(coursesDir, f), "utf-8")));
 
   return {
-    title: classroom.title,
+    title: sandbox.title,
     reviewers,
-    board: classroom.board,
-    statuses: classroom.statuses,
+    board: sandbox.board,
+    statuses: sandbox.statuses,
     students,
     projects,
     courses,

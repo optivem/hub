@@ -29,7 +29,7 @@ jobs:
         uses: ./.github/actions/comment-on-issue
         with:
           issue-number: ${{ github.event.issue.number }}
-          body: "🎉 Your Sandbox Project module **${{ github.event.issue.title }}** is **DONE**! The updated status will be shown on the [Dashboard](https://optivem.github.io/atdd-classroom/)."
+          body: "🎉 Your Sandbox Project module **${{ github.event.issue.title }}** is **DONE**! The updated status will be shown on the [Dashboard](https://optivem.github.io/sandbox/)."
 
       - name: Reopen and notify if closed by student
         if: steps.check.outputs.is-reviewer == 'false'

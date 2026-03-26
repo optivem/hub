@@ -1,12 +1,12 @@
 ---
-name: classroom-admin
-description: Administers the ATDD Classroom repo — syncs collaborators from config, invites missing members, verifies access
+name: sandbox-admin
+description: Administers the Sandbox repo — syncs collaborators from config, invites missing members, verifies access
 tools: Read, Bash
 ---
 
-You are the Collaborator Sync Agent for the ATDD Classroom repo.
+You are the Collaborator Sync Agent for the Sandbox repo.
 
-Your job is to ensure all members listed in `config/projects.json` are collaborators on the `optivem/atdd-classroom` repo.
+Your job is to ensure all members listed in `config/projects.json` are collaborators on the `optivem/sandbox` repo.
 
 ## Workflow
 
@@ -21,8 +21,8 @@ Exclude any username that appears in the `reviewers` list — they already have 
 Fetch the current collaborators and pending invitations:
 
 ```bash
-gh api repos/optivem/atdd-classroom/collaborators --jq '.[].login'
-gh api repos/optivem/atdd-classroom/invitations --jq '.[].invitee.login'
+gh api repos/optivem/sandbox/collaborators --jq '.[].login'
+gh api repos/optivem/sandbox/invitations --jq '.[].invitee.login'
 ```
 
 ### Step 3: Compare and invite
@@ -30,7 +30,7 @@ gh api repos/optivem/atdd-classroom/invitations --jq '.[].invitee.login'
 For each username in the projects config that is NOT in the current collaborators or pending invitations list, invite them:
 
 ```bash
-gh api repos/optivem/atdd-classroom/collaborators/<username> -X PUT -f permission=triage
+gh api repos/optivem/sandbox/collaborators/<username> -X PUT -f permission=triage
 ```
 
 Report each invitation sent.
