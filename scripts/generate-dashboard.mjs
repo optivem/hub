@@ -230,8 +230,8 @@ function buildMatrix(issues, course) {
   for (const issue of issues) {
     const labels = issue.labels.nodes.map((l) => l.name);
     const courseLabel = labels.find((l) => l.startsWith("course-"));
-    const moduleLabel = labels.find((l) => /^module-\d+$/.test(l));
-    const taskLabel = labels.find((l) => /^task-\d+$/.test(l));
+    const moduleLabel = labels.find((l) => /^module-\d+/.test(l));
+    const taskLabel = labels.find((l) => /^task-\d+/.test(l));
     const projectLabel = labels.find((l) => /^project-/.test(l));
 
     if (courseLabel !== `course-${course.id}`) continue;
@@ -241,8 +241,8 @@ function buildMatrix(issues, course) {
     }
     if (!moduleLabel || !projectLabel || !taskLabel) continue;
 
-    const moduleNum = moduleLabel.replace("module-", "");
-    const taskNum = taskLabel.replace("task-", "");
+    const moduleNum = moduleLabel.match(/^module-(\d+)/)[1];
+    const taskNum = taskLabel.match(/^task-(\d+)/)[1];
     const projKey = projectLabel.replace("project-", "");
 
     if (!matrix[projKey]) {
