@@ -21,9 +21,9 @@ jobs:
       module-num: ${{ steps.validate.outputs.module-num }}
       module-label: ${{ steps.validate.outputs.module-label }}
       module: ${{ steps.validate.outputs.module }}
-      task-num: ${{ steps.validate.outputs.task-num }}
-      task-label: ${{ steps.validate.outputs.task-label }}
-      task: ${{ steps.validate.outputs.task }}
+      milestone-num: ${{ steps.validate.outputs.milestone-num }}
+      milestone-label: ${{ steps.validate.outputs.milestone-label }}
+      milestone: ${{ steps.validate.outputs.milestone }}
     steps:
       - uses: actions/checkout@v6
 
@@ -42,7 +42,7 @@ jobs:
       is-duplicate: ${{ steps.duplicate.outputs.is-duplicate }}
       original-number: ${{ steps.duplicate.outputs.original-number }}
       allowed: ${{ steps.prereqs.outputs.allowed }}
-      missing-tasks: ${{ steps.prereqs.outputs.missing-tasks }}
+      missing-milestones: ${{ steps.prereqs.outputs.missing-milestones }}
     steps:
       - uses: actions/checkout@v6
 
@@ -54,7 +54,7 @@ jobs:
           project-key: ${{ needs.validate.outputs.project-key }}
           course-id: ${{ needs.validate.outputs.course-id }}
           module-label: ${{ needs.validate.outputs.module-label }}
-          task-label: ${{ needs.validate.outputs.task-label }}
+          milestone-label: ${{ needs.validate.outputs.milestone-label }}
 
       - name: Check module prerequisites
         id: prereqs
@@ -119,7 +119,7 @@ jobs:
         with:
           issue-number: ${{ github.event.issue.number }}
           title: "BLOCKED | ${{ github.event.issue.title }}"
-          body: "> [!CAUTION]\n> ## ❌ Prerequisites Not Met\n> You must complete all tasks in the previous module before starting this one.\n>\n> **Incomplete tasks:** ${{ needs.check-gates.outputs.missing-tasks }}\n>\n> Please complete those tasks first, then re-create this ticket.\n>\n> **This issue has been closed automatically.**"
+          body: "> [!CAUTION]\n> ## ❌ Prerequisites Not Met\n> You must complete all milestones in the previous module before starting this one.\n>\n> **Incomplete milestones:** ${{ needs.check-gates.outputs.missing-milestones }}\n>\n> Please complete those milestones first, then re-create this ticket.\n>\n> **This issue has been closed automatically.**"
 
       - name: Label blocked issue
         uses: ./.github/actions/add-labels
@@ -163,13 +163,13 @@ jobs:
           repo-url: ${{ needs.validate.outputs.repo-url }}
           course-id: ${{ needs.validate.outputs.course-id }}
           module: ${{ needs.validate.outputs.module }}
-          task: ${{ needs.validate.outputs.task }}
+          milestone: ${{ needs.validate.outputs.milestone }}
 
-      - name: Add project, course, module, and task labels
+      - name: Add project, course, module, and milestone labels
         uses: ./.github/actions/add-labels
         with:
           issue-number: ${{ github.event.issue.number }}
-          labels: "project-${{ needs.validate.outputs.project-key }}, course-${{ needs.validate.outputs.course-id }}, module-${{ needs.validate.outputs.module-label }}, task-${{ needs.validate.outputs.task-label }}"
+          labels: "project-${{ needs.validate.outputs.project-key }}, course-${{ needs.validate.outputs.course-id }}, module-${{ needs.validate.outputs.module-label }}, milestone-${{ needs.validate.outputs.milestone-label }}"
 
       - name: Set issue type to Task
         uses: ./.github/actions/set-issue-type

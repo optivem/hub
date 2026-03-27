@@ -1,4 +1,4 @@
-**Task 1: Project Repository**
+**Milestone 1: Project Repository**
 
 - [ ] Project Repository has been created
 - [ ] Project Repository visibility is Public
@@ -6,7 +6,7 @@
 - [ ] Project Repository includes yourself and any team members as collaborators
 - [ ] Project Repository includes the reviewer as a collaborator
 
-**Task 2: Project Documentation**
+**Milestone 2: Project Documentation**
 
 - [ ] README file includes the Project Name
 - [ ] README file includes the LICENSE Name

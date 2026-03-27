@@ -37,15 +37,15 @@ outputs:
   module-label:
     description: The module label from the course folder name (e.g. "01-introduction").
     value: ${{ steps.validate.outputs.module_label }}
-  task:
-    description: The selected task string.
-    value: ${{ steps.validate.outputs.task }}
-  task-num:
-    description: The task number (e.g. "03").
-    value: ${{ steps.validate.outputs.task_num }}
-  task-label:
-    description: The task label from the lesson file name (e.g. "01-setup").
-    value: ${{ steps.validate.outputs.task_label }}
+  milestone:
+    description: The selected milestone string.
+    value: ${{ steps.validate.outputs.milestone }}
+  milestone-num:
+    description: The milestone number (e.g. "03").
+    value: ${{ steps.validate.outputs.milestone_num }}
+  milestone-label:
+    description: The milestone label from the config (e.g. "01-setup").
+    value: ${{ steps.validate.outputs.milestone_label }}
   assignees:
     description: Comma-separated list of team member GitHub usernames.
     value: ${{ steps.validate.outputs.assignees }}
@@ -70,9 +70,9 @@ runs:
           const selectedModule = moduleMatch ? moduleMatch[1].trim() : '';
           core.setOutput('module', selectedModule);
 
-          const taskMatch = body.match(/### Task\s*\n\s*(.+)/);
-          const selectedTask = taskMatch ? taskMatch[1].trim() : '';
-          core.setOutput('task', selectedTask);
+          const milestoneMatch = body.match(/### Milestone\s*\n\s*(.+)/);
+          const selectedMilestone = milestoneMatch ? milestoneMatch[1].trim() : '';
+          core.setOutput('milestone', selectedMilestone);
 
           const projectMatch = body.match(/### Project\s*\n\s*(.+)/);
           const selectedProject = projectMatch ? projectMatch[1].trim() : '';
@@ -125,27 +125,27 @@ runs:
           core.setOutput('project_name', team.name);
           core.setOutput('project_key', team.key);
           core.setOutput('repo_url', team.repo);
-          const taskNum = selectedTask ? selectedTask.split(' - ')[0] : '';
+          const milestoneNum = selectedMilestone ? selectedMilestone.split(' - ')[0] : '';
           core.setOutput('module_num', moduleNum);
-          core.setOutput('task_num', taskNum);
+          core.setOutput('milestone_num', milestoneNum);
           core.setOutput('assignees', team.members.join(','));
           core.setOutput('course_id', courseId);
 
           // Look up labels from config
           let moduleLabel = '';
-          let taskLabel = '';
+          let milestoneLabel = '';
           if (courseId) {
             const course = data.courses.find(c => c.id === courseId);
             if (course) {
               const mod = course.modules.find(m => m.number === moduleNum);
               if (mod) {
                 moduleLabel = mod.label || '';
-                if (taskNum) {
-                  const task = mod.tasks.find(t => t.number === taskNum);
-                  if (task) taskLabel = task.label || '';
+                if (milestoneNum) {
+                  const milestone = mod.milestones.find(t => t.number === milestoneNum);
+                  if (milestone) milestoneLabel = milestone.label || '';
                 }
               }
             }
           }
           core.setOutput('module_label', moduleLabel);
-          core.setOutput('task_label', taskLabel);
+          core.setOutput('milestone_label', milestoneLabel);

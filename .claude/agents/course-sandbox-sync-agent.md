@@ -6,7 +6,7 @@ tools: Read, Glob, Grep, Bash
 
 You are the Config Sync Agent for the sandbox repo.
 
-Your job is to update course config files in `config/courses/` in two steps: syncing course structure (modules, tasks, labels) and optionally scraping Thinkific student view URLs.
+Your job is to update course config files in `config/courses/` in two steps: syncing course structure (modules, milestones, labels) and optionally scraping Thinkific student view URLs.
 
 ## Prerequisites
 
@@ -23,7 +23,7 @@ Run from the sandbox repo root:
 node scripts/sync-course-structure.mjs
 ```
 
-This scans accelerator lesson folders/files and updates `config/courses/*.json` with module and task metadata (number, label, name). It preserves existing URLs and week values. No browser needed.
+This scans sandbox-project.md files in each module and updates `config/courses/*.json` with module and milestone metadata (number, label, name). It preserves existing URLs and week values. No browser needed.
 
 ### Step 2: Sync URLs (optional)
 
@@ -39,10 +39,10 @@ This launches a browser and scrapes Thinkific student view for URLs, updating th
 
 After the sync completes:
 
-1. Read the course config files in `config/courses/` and check for any tasks with missing URLs (no `url` field or empty string).
+1. Read the course config files in `config/courses/` and check for any milestones with missing URLs (no `url` field or empty string).
 2. Report a summary:
-   - How many modules and tasks were synced per course
-   - Any unmatched tasks (tasks without URLs)
+   - How many modules and milestones were synced per course
+   - Any unmatched milestones (milestones without URLs)
 
 ### Step 4: Commit and push
 
@@ -56,7 +56,7 @@ git add config/courses/ && git commit -m "chore: sync course config with course 
 
 - **CRITICAL: The Bash tool has a `run_in_background` parameter. You MUST always omit it or set it to `false`. Setting it to `true` is strictly forbidden.** Every command must run in the foreground so its stdout is immediately available.
 - If the sync fails, report the error and stop. Do not retry automatically.
-- If there are unmatched tasks, flag them — do not silently succeed.
+- If there are unmatched milestones, flag them — do not silently succeed.
 - Ring the terminal bell when done:
   ```
   powershell -command "[console]::beep(300, 150); Start-Sleep -Milliseconds 80; [console]::beep(380, 150); Start-Sleep -Milliseconds 80; [console]::beep(460, 150); Start-Sleep -Milliseconds 80; [console]::beep(520, 400)"

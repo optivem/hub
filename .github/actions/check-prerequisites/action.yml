@@ -1,5 +1,5 @@
 name: Check Module Prerequisites
-description: Verifies that all tasks in the previous module are "Done" before allowing a new ticket.
+description: Verifies that all milestones in the previous module are "Done" before allowing a new ticket.
 
 inputs:
   project-key:
@@ -19,9 +19,9 @@ outputs:
   allowed:
     description: "'true' if the previous module is complete or this is module 1."
     value: ${{ steps.check.outputs.allowed }}
-  missing-tasks:
-    description: "Comma-separated list of incomplete tasks from the previous module."
-    value: ${{ steps.check.outputs.missing_tasks }}
+  missing-milestones:
+    description: "Comma-separated list of incomplete milestones from the previous module."
+    value: ${{ steps.check.outputs.missing_milestones }}
 
 runs:
   using: composite
@@ -44,7 +44,7 @@ runs:
           const course = config.courses.find(c => c.id === courseId);
           if (!course) {
             core.setOutput('allowed', 'true');
-            core.setOutput('missing_tasks', '');
+            core.setOutput('missing_milestones', '');
             return;
           }
 
@@ -53,15 +53,15 @@ runs:
           if (moduleIndex <= 0) {
             // First module or not found — no prerequisites
             core.setOutput('allowed', 'true');
-            core.setOutput('missing_tasks', '');
+            core.setOutput('missing_milestones', '');
             return;
           }
 
           const prevModule = course.modules[moduleIndex - 1];
-          const prevTasks = prevModule.tasks || [];
-          if (prevTasks.length === 0) {
+          const prevMilestones = prevModule.milestones || [];
+          if (prevMilestones.length === 0) {
             core.setOutput('allowed', 'true');
-            core.setOutput('missing_tasks', '');
+            core.setOutput('missing_milestones', '');
             return;
           }
 
@@ -78,22 +78,22 @@ runs:
             per_page: 100
           });
 
-          // Build a map of task label → issue node ID
-          const taskIssueMap = {};
+          // Build a map of milestone label → issue node ID
+          const milestoneIssueMap = {};
           for (const issue of issues.data) {
-            const taskLabel = issue.labels.find(l => /^task-.+/.test(l.name));
-            if (taskLabel) {
-              const taskKey = taskLabel.name.replace('task-', '');
-              taskIssueMap[taskKey] = issue.node_id;
+            const milestoneLabel = issue.labels.find(l => /^milestone-.+/.test(l.name));
+            if (milestoneLabel) {
+              const milestoneKey = milestoneLabel.name.replace('milestone-', '');
+              milestoneIssueMap[milestoneKey] = issue.node_id;
             }
           }
 
-          // Check each task in the previous module
-          const incompleteTasks = [];
-          for (const task of prevTasks) {
-            const nodeId = taskIssueMap[task.label || task.number];
+          // Check each milestone in the previous module
+          const incompleteMilestones = [];
+          for (const milestone of prevMilestones) {
+            const nodeId = milestoneIssueMap[milestone.label || milestone.number];
             if (!nodeId) {
-              incompleteTasks.push(`${prevModule.number}.${task.number} - ${task.name}`);
+              incompleteMilestones.push(`${prevModule.number}.${milestone.number} - ${milestone.name}`);
               continue;
             }
 
@@ -120,14 +120,14 @@ runs:
             const item = result.node.projectItems.nodes.find(n => n.project.id === projectId);
             const status = item?.fieldValueByName?.name || '';
             if (status !== 'Done') {
-              incompleteTasks.push(`${prevModule.number}.${task.number} - ${task.name}`);
+              incompleteMilestones.push(`${prevModule.number}.${milestone.number} - ${milestone.name}`);
             }
           }
 
-          if (incompleteTasks.length === 0) {
+          if (incompleteMilestones.length === 0) {
             core.setOutput('allowed', 'true');
-            core.setOutput('missing_tasks', '');
+            core.setOutput('missing_milestones', '');
           } else {
             core.setOutput('allowed', 'false');
-            core.setOutput('missing_tasks', incompleteTasks.join(', '));
+            core.setOutput('missing_milestones', incompleteMilestones.join(', '));
           }

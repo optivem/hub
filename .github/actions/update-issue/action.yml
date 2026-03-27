@@ -20,8 +20,8 @@ inputs:
   module:
     description: The selected module string (e.g. "02 - Smoke Tests").
     required: true
-  task:
-    description: The selected task string (e.g. "01 - API Smoke Tests").
+  milestone:
+    description: The selected milestone string (e.g. "01 - Smoke Tests").
     required: false
 
 runs:
@@ -37,32 +37,32 @@ runs:
           const projectName = '${{ inputs.project-name }}';
           const repoUrl = '${{ inputs.repo-url }}';
           const selectedModule = '${{ inputs.module }}';
-          const selectedTask = '${{ inputs.task }}';
+          const selectedMilestone = '${{ inputs.milestone }}';
           const moduleNum = selectedModule.split(' - ')[0];
-          const taskNum = selectedTask ? selectedTask.split(' - ')[0] : '';
+          const milestoneNum = selectedMilestone ? selectedMilestone.split(' - ')[0] : '';
 
           const courseId = '${{ inputs.course-id }}';
           const config = loadConfig('.');
           const course = config.courses.find(c => c.id === courseId);
           const courseName = course ? course.name : courseId;
 
-          const taskName = selectedTask ? selectedTask.replace(/^\d+\s*-\s*/, '') : '';
-          const compositeId = selectedTask
-            ? `${projectKey}-${courseId.toUpperCase()}-${moduleNum}.${taskNum}`
+          const milestoneName = selectedMilestone ? selectedMilestone.replace(/^\d+\s*-\s*/, '') : '';
+          const compositeId = selectedMilestone
+            ? `${projectKey}-${courseId.toUpperCase()}-${moduleNum}.${milestoneNum}`
             : `${projectKey}-${courseId.toUpperCase()}-${moduleNum}`;
-          const newTitle = selectedTask
-            ? `${compositeId} | ${taskName}`
+          const newTitle = selectedMilestone
+            ? `${compositeId} | ${milestoneName}`
             : `${compositeId} | ${selectedModule}`;
 
           let body = `## Overview\n\n`;
           body += `**Project:** [${projectName}](${repoUrl})\n`;
           body += `**Course:** ${courseName}\n`;
           body += `**Module:** ${selectedModule}\n`;
-          if (selectedTask) {
-            body += `**Task:** ${selectedTask}\n`;
+          if (selectedMilestone) {
+            body += `**Milestone:** ${selectedMilestone}\n`;
           }
-          const checklistPath = selectedTask
-            ? `checklists/${courseId}/${moduleNum}/${taskNum}.md`
+          const checklistPath = selectedMilestone
+            ? `checklists/${courseId}/${moduleNum}/${milestoneNum}.md`
             : `checklists/${courseId}/${moduleNum}.md`;
           if (fs.existsSync(checklistPath)) {
             const checklist = fs.readFileSync(checklistPath, 'utf8').trim();
