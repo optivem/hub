@@ -2,6 +2,14 @@
 
 For a working example, see the [Greeter](https://github.com/optivem/greeter) template.
 
+## Setup
+
+Before running the QA stage, create the `qa` GitHub environment in your repository:
+
+1. Go to your repository on GitHub.
+2. Click **Settings** → **Environments** → **New environment**.
+3. Name it `qa` and click **Configure environment**.
+
 ## Verify the QA Stage
 
 1. Go to **Actions** on GitHub.
