@@ -8,7 +8,7 @@
       "label": "01-introduction",
       "name": "Introduction",
       "url": "https://optivem.thinkific.com/courses/take/pipeline/texts/73800730-overview",
-      "tasks": [
+      "milestones": [
         {
           "number": "01",
           "label": "01-setup",
@@ -22,134 +22,66 @@
       "label": "02-commit-stage",
       "name": "Commit Stage",
       "url": "https://optivem.thinkific.com/courses/take/pipeline/texts/73800764-overview",
-      "tasks": [
+      "milestones": [
         {
           "number": "01",
           "label": "01-commit-stage",
           "name": "Commit Stage",
           "url": "https://optivem.thinkific.com/courses/take/pipeline/texts/70100650-commit-stage"
-        },
-        {
-          "number": "02",
-          "label": "02-multi-component",
-          "name": "Multi-Component: Commit Stage",
-          "url": "https://optivem.thinkific.com/courses/take/pipeline/texts/70100688-multi-component-commit-stage"
-        },
-        {
-          "number": "03",
-          "label": "03-multi-repo",
-          "name": "Multi-Repository: Commit Stage",
-          "url": "https://optivem.thinkific.com/courses/take/pipeline/texts/73800768-multi-repository-commit-stage"
         }
       ]
     },
     {
       "number": "03",
-      "label": "03-qa-stage",
-      "name": "QA Stage",
+      "label": "03-acceptance-stage",
+      "name": "Acceptance Stage",
       "url": "https://optivem.thinkific.com/courses/take/pipeline/texts/73800794-overview",
-      "tasks": [
+      "milestones": [
         {
           "number": "01",
-          "label": "01-qa-stage",
-          "name": "QA Stage",
+          "label": "01-acceptance-stage",
+          "name": "Acceptance Stage",
           "url": "https://optivem.thinkific.com/courses/take/pipeline/texts/70100809-qa-stage"
         },
         {
           "number": "02",
-          "label": "02-qa-signoff",
-          "name": "QA Signoff",
+          "label": "02-smoke-tests",
+          "name": "Smoke Tests",
           "url": "https://optivem.thinkific.com/courses/take/pipeline/texts/70100814-qa-signoff"
         },
         {
           "number": "03",
-          "label": "03-multi-component",
-          "name": "Multi-Component: QA Stage",
+          "label": "03-e2e-tests",
+          "name": "E2E Tests",
           "url": "https://optivem.thinkific.com/courses/take/pipeline/texts/70100844-multi-component-qa-stage"
-        },
-        {
-          "number": "04",
-          "label": "04-multi-repo",
-          "name": "Multi-Repository: QA Stage",
-          "url": "https://optivem.thinkific.com/courses/take/pipeline/texts/73800807-multi-repository-qa-stage"
         }
       ]
     },
     {
       "number": "04",
-      "label": "04-production-stage",
-      "name": "Production Stage",
+      "label": "04-qa-stage",
+      "name": "QA Stage",
       "url": "https://optivem.thinkific.com/courses/take/pipeline/texts/73800819-overview",
-      "tasks": [
+      "milestones": [
         {
           "number": "01",
-          "label": "01-production-stage",
-          "name": "Production Stage",
+          "label": "01-qa-stage",
+          "name": "QA Stage",
           "url": "https://optivem.thinkific.com/courses/take/pipeline/texts/70100858-production-stage"
-        },
-        {
-          "number": "02",
-          "label": "02-multi-component",
-          "name": "Multi-Component: Production Stage",
-          "url": "https://optivem.thinkific.com/courses/take/pipeline/texts/70100877-multi-component-production-stage"
-        },
-        {
-          "number": "03",
-          "label": "03-multi-repo",
-          "name": "Multi-Repository: Production Stage",
-          "url": "https://optivem.thinkific.com/courses/take/pipeline/texts/73800825-multi-repository-production-stage"
         }
       ]
     },
     {
       "number": "05",
-      "label": "05-acceptance-stage",
-      "name": "Acceptance Stage",
+      "label": "05-production-stage",
+      "name": "Production Stage",
       "url": "https://optivem.thinkific.com/courses/take/pipeline/texts/73800834-overview",
-      "tasks": [
+      "milestones": [
         {
           "number": "01",
-          "label": "01-acceptance-stage",
-          "name": "Acceptance Stage",
+          "label": "01-production-stage",
+          "name": "Production Stage",
           "url": "https://optivem.thinkific.com/courses/take/pipeline/texts/70100917-acceptance-stage"
-        },
-        {
-          "number": "02",
-          "label": "02-multi-component",
-          "name": "Multi-Component: Acceptance Stage",
-          "url": "https://optivem.thinkific.com/courses/take/pipeline/texts/70100936-multi-component-acceptance-stage"
-        },
-        {
-          "number": "03",
-          "label": "03-multi-repo",
-          "name": "Multi-Repository: Acceptance Stage",
-          "url": "https://optivem.thinkific.com/courses/take/pipeline/texts/73800840-multi-repository-acceptance-stage"
-        },
-        {
-          "number": "05",
-          "label": "05-stage-run-conditions",
-          "name": "Stage Run Conditions",
-          "url": "https://optivem.thinkific.com/courses/take/pipeline/texts/70100930-stage-run-conditions"
-        }
-      ]
-    },
-    {
-      "number": "06",
-      "label": "06-extensions",
-      "name": "Extensions (Optional)",
-      "url": "https://optivem.thinkific.com/courses/take/pipeline/texts/73800859-overview",
-      "tasks": [
-        {
-          "number": "01",
-          "label": "01-additional-technical-characteristics",
-          "name": "Additional Technical Characteristics",
-          "url": "https://optivem.thinkific.com/courses/take/pipeline/texts/70101018-additional-technical-characteristics"
-        },
-        {
-          "number": "02",
-          "label": "02-go-further",
-          "name": "Go Further",
-          "url": "https://optivem.thinkific.com/courses/take/pipeline/texts/73800864-go-further"
         }
       ]
     }

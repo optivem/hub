@@ -1,9 +1,13 @@
 #!/usr/bin/env node
 
 /**
- * Sync course structure: scan accelerator lesson folders/files
- * and update config/courses/*.json with module and task metadata
+ * Sync course structure: scan sandbox-project.md files in each module
+ * and update config/courses/*.json with module and milestone metadata
  * (number, label, name). Does NOT touch URLs.
+ *
+ * Milestones are extracted from "## Milestone N: Name" headings in
+ * each module's sandbox-project.md file. Modules without a
+ * sandbox-project.md are excluded from the config.
  *
  * Usage: node scripts/sync-course-structure.mjs [courses-root]
  *   courses-root defaults to ../courses (relative to sandbox repo root)
@@ -17,10 +21,10 @@ const __dirname = dirname(fileURLToPath(import.meta.url));
 const ROOT = join(__dirname, "..");
 const coursesRoot = resolve(process.argv[2] || join(ROOT, "..", "courses"));
 
-const COURSE_PATHS = {
-  pipeline: join(coursesRoot, "pipeline", "accelerator", "course"),
-  atdd: join(coursesRoot, "atdd", "accelerator", "course"),
-};
+const COURSES = [
+  { id: "pipeline", configFile: "01-pipeline.json", coursePath: join(coursesRoot, "01-pipeline", "accelerator", "course") },
+  { id: "atdd", configFile: "02-atdd.json", coursePath: join(coursesRoot, "02-atdd", "accelerator", "course") },
+];
 
 function readModuleTitle(moduleDir) {
   const indexPath = join(moduleDir, "_index.md");
@@ -30,10 +34,28 @@ function readModuleTitle(moduleDir) {
   return match ? match[1].trim() : null;
 }
 
-function readLessonTitle(lessonPath) {
-  const content = readFileSync(lessonPath, "utf-8").trim();
-  const match = content.match(/^#\s+(.+)$/m);
-  return match ? match[1].trim() : null;
+function slugify(text) {
+  return text
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/^-|-$/g, "");
+}
+
+function parseMilestones(sandboxProjectPath) {
+  const content = readFileSync(sandboxProjectPath, "utf-8");
+  const regex = /^## Milestone (\d+):\s*(.+)$/gm;
+  const milestones = [];
+  let match;
+  while ((match = regex.exec(content)) !== null) {
+    const num = match[1].padStart(2, "0");
+    const name = match[2].trim();
+    milestones.push({
+      number: num,
+      label: `${num}-${slugify(name)}`,
+      name,
+    });
+  }
+  return milestones;
 }
 
 function scanModules(coursePath) {
@@ -46,22 +68,18 @@ function scanModules(coursePath) {
     const name = readModuleTitle(moduleDir);
     if (!name) return null;
 
-    const files = readdirSync(moduleDir)
-      .filter(f => f.endsWith(".md") && f !== "_index.md" && f !== "00-overview.md" && !f.includes("guide"))
-      .filter(f => /^\d{2}-/.test(f))
-      .sort();
+    // Find sandbox-project.md file
+    const sandboxFile = readdirSync(moduleDir)
+      .find(f => f.includes("sandbox-project") && f.endsWith(".md"));
+    if (!sandboxFile) return null;
 
-    const tasks = files.map(f => ({
-      number: f.slice(0, 2),
-      label: f.replace(/\.md$/, ""),
-      name: readLessonTitle(join(moduleDir, f)) || f.replace(/^\d{2}-/, "").replace(/\.md$/, ""),
-    }));
+    const milestones = parseMilestones(join(moduleDir, sandboxFile));
 
     return {
       number: dir.slice(0, 2),
       label: dir,
       name,
-      tasks,
+      milestones,
     };
   }).filter(Boolean);
 }
@@ -69,8 +87,8 @@ function scanModules(coursePath) {
 // Main
 const configDir = join(ROOT, "config", "courses");
 
-for (const [courseId, coursePath] of Object.entries(COURSE_PATHS)) {
-  const configPath = join(configDir, `${courseId}.json`);
+for (const { id: courseId, configFile, coursePath } of COURSES) {
+  const configPath = join(configDir, configFile);
 
   if (!existsSync(configPath)) {
     console.log(`Skipping ${courseId}: no config file at ${configPath}`);
@@ -87,11 +105,11 @@ for (const [courseId, coursePath] of Object.entries(COURSE_PATHS)) {
   // Build lookup of existing data to preserve URLs and week values
   const existing = new Map();
   for (const m of course.modules || []) {
-    const tasks = new Map();
-    for (const t of m.tasks || []) {
-      tasks.set(t.number, t);
+    const milestones = new Map();
+    for (const t of m.milestones || []) {
+      milestones.set(t.number, t);
     }
-    existing.set(m.number, { ...m, _tasks: tasks });
+    existing.set(m.number, { ...m, _milestones: milestones });
   }
 
   course.modules = scanned.map(m => {
@@ -99,9 +117,9 @@ for (const [courseId, coursePath] of Object.entries(COURSE_PATHS)) {
     const mod = { number: m.number, label: m.label, name: m.name, url: prev.url || "" };
     if (prev.week) mod.week = prev.week;
 
-    const prevTasks = prev._tasks || new Map();
-    mod.tasks = m.tasks.map(t => {
-      const pt = prevTasks.get(t.number) || {};
+    const prevMilestones = prev._milestones || new Map();
+    mod.milestones = m.milestones.map(t => {
+      const pt = prevMilestones.get(t.number) || {};
       return { number: t.number, label: t.label, name: t.name, url: pt.url || "" };
     });
 
@@ -110,6 +128,6 @@ for (const [courseId, coursePath] of Object.entries(COURSE_PATHS)) {
 
   writeFileSync(configPath, JSON.stringify(course, null, 2) + "\n");
 
-  const taskCount = course.modules.reduce((sum, m) => sum + m.tasks.length, 0);
-  console.log(`${courseId}: ${course.modules.length} modules, ${taskCount} tasks`);
+  const milestoneCount = course.modules.reduce((sum, m) => sum + m.milestones.length, 0);
+  console.log(`${courseId}: ${course.modules.length} modules, ${milestoneCount} milestones`);
 }

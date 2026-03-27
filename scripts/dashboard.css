@@ -26,9 +26,9 @@
     .module-group-name a { color: #1d4ed8; text-decoration: none; }
     .week-badge { display: inline-block; font-size: 0.65rem; font-weight: 600; color: #6b7280; background: #f3f4f6; border: 1px solid #d1d5db; border-radius: 4px; padding: 1px 5px; margin-right: 6px; vertical-align: middle; }
     .module-group-name a:hover { text-decoration: underline; }
-    .task-name { text-align: left; font-weight: 500; background: #fff; white-space: nowrap; padding-left: 24px !important; width: 320px; min-width: 320px; max-width: 320px; font-size: 0.78rem; color: #374151; }
-    .task-name a { color: #1d4ed8; text-decoration: none; }
-    .task-name a:hover { text-decoration: underline; }
+    .milestone-name { text-align: left; font-weight: 500; background: #fff; white-space: nowrap; padding-left: 24px !important; width: 320px; min-width: 320px; max-width: 320px; font-size: 0.78rem; color: #374151; }
+    .milestone-name a { color: #1d4ed8; text-decoration: none; }
+    .milestone-name a:hover { text-decoration: underline; }
     .project-header { width: 80px; min-width: 80px; max-width: 80px; }
     .project-header a { color: #1d4ed8; text-decoration: none; }
     .project-header a:hover { text-decoration: underline; }
@@ -82,8 +82,8 @@
     .card-modules li { display: flex; justify-content: space-between; padding: 4px 0; border-bottom: 1px solid #f3f4f6; }
     .card-modules li:last-child { border-bottom: none; }
     .card-module-header { font-weight: 700; background: #f3f4f6; padding: 6px 8px !important; margin-top: 4px; border-radius: 4px; display: block !important; color: #111827; font-size: 0.82rem; }
-    .card-task-item { padding-left: 12px !important; }
-    .card-task-name { color: #374151; }
+    .card-milestone-item { padding-left: 12px !important; }
+    .card-milestone-name { color: #374151; }
     .card-module-name { color: #374151; }
     .card-module-status { font-weight: 600; }
     .card-module-status a { text-decoration: none; }
