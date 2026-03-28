@@ -53,6 +53,14 @@ curl -s -u "${SONAR_TOKEN}:" \
   "https://sonarcloud.io/api/projects/search?organization=${SONAR_ORG}" | jq '.components[].key'
 ```
 
+SonarCloud defaults to `master` as the main branch. If your repository uses `main`, rename it:
+
+```bash
+curl -s -u "${SONAR_TOKEN}:" \
+  -X POST "https://sonarcloud.io/api/project_branches/rename" \
+  -d "project=${SONAR_PROJECT}&name=main"
+```
+
 ## 4. Add GitHub Secret (CLI)
 
 The `SONAR_TOKEN` is the same for all repos in your organization — it is your personal token, not per-project.
