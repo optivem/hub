@@ -4,23 +4,32 @@ For a working example, see the [Greeter](https://github.com/optivem/greeter) tem
 
 ## Setup
 
-Before running the production stage, create the `production` GitHub environment in your repository:
+Create the `production` GitHub environment (CLI):
 
-1. Go to your repository on GitHub.
-2. Click **Settings** → **Environments** → **New environment**.
-3. Name it `production` and click **Configure environment**.
+```bash
+gh api repos/<owner>/<repo>/environments/production -X PUT
+```
 
 ## Verify the Production Stage
 
-1. Go to **Actions** on GitHub.
-2. Click on `prod-stage`, then **Run workflow**.
-3. Enter the prerelease version that passed QA sign-off (e.g. `v0.0.1-rc`).
-4. Click **Run workflow** and wait for completion. If it fails, stop and ask for support.
-5. Click on the workflow run and review the summary. Note the release version (e.g. `v0.0.1` — the `-rc` suffix is removed).
-6. Go to **Releases**. You should see a release marked as **Latest** with the release version.
+1. Trigger the production stage with the RC version that passed QA signoff (CLI):
+   ```bash
+   gh workflow run prod-stage.yml --repo <owner>/<repo> -f version=<rc-version>
+   ```
+2. Wait for completion (CLI):
+   ```bash
+   gh run watch --repo <owner>/<repo>
+   ```
+   If it fails, stop and ask for support.
+3. Verify the final release exists and is marked Latest (CLI):
+   ```bash
+   gh release list --repo <owner>/<repo> --limit 5
+   ```
+   You should see a release with the `-rc` suffix removed (e.g. `v0.0.1`) marked as **Latest**.
 
 ## Checklist
 
-1. `prod-stage` workflow completes successfully
-2. Release is tagged and marked as Latest in GitHub Releases
-3. Monolith Package has final version tag (e.g. `-rc` suffix removed)
+1. `production` environment exists
+2. `prod-stage` workflow completes successfully
+3. Release is tagged and marked as Latest in GitHub Releases
+4. Monolith Package has final version tag (e.g. `-rc` suffix removed)

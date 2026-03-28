@@ -33,20 +33,33 @@ In `.github/workflows`:
 
 1. Delete `commit-stage-monolith.yml`.
 
-**Commit and push.**
+**Commit and push (CLI):**
 
-> After pushing, the Acceptance Stage, QA Stage, and Production Stage will fail because they still reference "monolith". This is expected — you will update each stage in the corresponding multi-component lessons in later modules. For now, only verify that the Commit Stages pass.
+```bash
+git add -A && git commit -m "Decompose into multi-component" && git push
+```
 
-Verify:
+> After pushing, the Acceptance Stage, QA Stage, and Production Stage will fail because they still reference "monolith". This is expected — you will update each stage in the corresponding multi-component lessons. For now, only verify that the Commit Stages pass.
+
+Verify (CLI):
+
+```bash
+gh run list --repo <owner>/<repo> --limit 5 --json name,status,conclusion
+```
 
 - `commit-stage-frontend` passes
 - `commit-stage-backend` passes
 - `commit-stage-monolith` no longer exists
 
-In Packages:
+Verify packages exist (CLI):
 
-1. Verify `frontend` and `backend` packages exist.
-2. Delete the `monolith` package (Package → Package settings → Delete this package).
+```bash
+gh api users/<owner>/packages?package_type=container --jq '.[].name'
+```
+
+Delete the `monolith` package (browser — cannot be done via CLI):
+
+Go to Packages → click monolith → Package settings → Delete this package.
 
 ## 3. Update README
 
@@ -64,3 +77,12 @@ In `system-test/docker-compose.yml`:
 ## Frontend + Microservice Backend
 
 *Only if your project uses a microservice architecture.* Complete the Frontend + Backend steps above first, then split the backend into microservices — create a separate Commit Stage per microservice and update the README and Docker Compose accordingly.
+
+## Checklist
+
+1. `commit-stage-frontend` passes
+2. `commit-stage-backend` passes
+3. `commit-stage-monolith` is deleted
+4. `monolith` package is deleted from Packages (browser)
+5. README badges updated
+6. Docker Compose updated and working locally

@@ -8,13 +8,24 @@ Open the file `acceptance-stage.yml`.
 
 Find the word `monolith` inside `image-urls` — there's one line. Copy-paste that line so you have two lines. In the first line, replace `monolith` with `frontend`. In the second line, replace `monolith` with `backend`.
 
-Commit and push.
+Commit and push (CLI):
 
-Manually trigger `acceptance-stage` (with the "Force run" option).
+```bash
+git add -A && git commit -m "Update acceptance stage for multi-component" && git push
+```
 
-Verify that it is successful.
+Trigger `acceptance-stage` with Force run (CLI):
 
-Note the RC version.
+```bash
+gh workflow run acceptance-stage.yml --repo <owner>/<repo> -f force_run=true
+gh run watch --repo <owner>/<repo>
+```
+
+Verify that it is successful. Note the RC version (CLI):
+
+```bash
+gh release list --repo <owner>/<repo> --limit 5
+```
 
 ## Checklist
 

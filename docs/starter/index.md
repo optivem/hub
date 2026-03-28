@@ -1,5 +1,7 @@
 # Starter
 
+0. [Prerequisites](00-prerequisites.md)
+
 ## Monolith
 
 1. [Monolith - Setup](01-monolith-setup.md)

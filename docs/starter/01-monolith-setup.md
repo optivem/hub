@@ -8,30 +8,45 @@
 
 ## Usage
 
-1. Open up the template based on your chosen language (see [Starter Templates](#starter-templates) above).
+1. Clone the template based on your chosen language (CLI):
+   ```bash
+   gh repo clone optivem/greeter-{language} /tmp/greeter-template
+   ```
    - *If your chosen language is not on the list, no worries, just choose any of the templates because the Pipeline Architecture is the same — you can do language replacement afterwards.*
-2. Download that template repository.
-3. Open up YOUR repository.
-4. Copy paste the following from the template repository into YOUR repository:
-   - `.github`
-   - `monolith`
-   - `system-test`
-   - `VERSION`
-   - `README.md` (only the top part, that contains the status badges)
-5. Replace `optivem/greeter-{language}` with `<your_repo_owner>/<your_repo_name>` in the whole project:
+2. Copy the following from the template into your repository (CLI):
+   ```bash
+   cp -r /tmp/greeter-template/.github .
+   cp -r /tmp/greeter-template/monolith .
+   cp -r /tmp/greeter-template/system-test .
+   cp -f /tmp/greeter-template/VERSION . 2>/dev/null || true
+   ```
+   - Also copy the top part of `README.md` (the status badges section) from the template.
+3. Replace `optivem/greeter-{language}` with `<your_repo_owner>/<your_repo_name>` in the whole project (CLI):
+   ```bash
+   grep -rl "optivem/greeter-{language}" . --include="*.yml" --include="*.yaml" --include="*.md" | xargs sed -i 's|optivem/greeter-{language}|<owner>/<repo>|g'
+   ```
    - In the README file, so that the status badges point to your workflows (not the template workflows)
    - In `system-test/docker-compose.yml`, to reference your Docker Image (not the template image)
-6. In the Docker Compose file, ensure that everything is lowercase in the image url.
-7. Commit and push.
-8. Add Docker Hub credentials to your repository:
-   - Create a Docker Hub access token at [Docker Hub Security Settings](https://hub.docker.com/settings/security) if you don't have one.
-   - Then run:
-     ```bash
-     gh variable set DOCKERHUB_USERNAME --body "your-dockerhub-username" --repo <owner>/<repo>
-     gh secret set DOCKERHUB_TOKEN --body "your-dockerhub-token" --repo <owner>/<repo>
-     ```
-9. Manually trigger `commit-stage-monolith` and wait for it to finish successfully.
-10. Manually trigger `acceptance-stage` and wait for it to finish successfully.
+4. In the Docker Compose file, ensure that everything is lowercase in the image url.
+5. Commit and push (CLI):
+   ```bash
+   git add -A && git commit -m "Apply pipeline template" && git push
+   ```
+6. Add Docker Hub credentials to your repository (CLI) — skip if already done in [Prerequisites](00-prerequisites.md):
+   ```bash
+   gh variable set DOCKERHUB_USERNAME --body "<your-dockerhub-username>" --repo <owner>/<repo>
+   gh secret set DOCKERHUB_TOKEN --body "<your-dockerhub-token>" --repo <owner>/<repo>
+   ```
+7. Trigger `commit-stage-monolith` and wait for it to finish (CLI):
+   ```bash
+   gh workflow run commit-stage-monolith.yml --repo <owner>/<repo>
+   gh run watch --repo <owner>/<repo>
+   ```
+8. Trigger `acceptance-stage` and wait for it to finish (CLI):
+   ```bash
+   gh workflow run acceptance-stage.yml --repo <owner>/<repo>
+   gh run watch --repo <owner>/<repo>
+   ```
 
 ## Customization
 
@@ -51,9 +66,19 @@
    - Build and run locally. Note the port (e.g. 2500).
    - In `system-test/docker-compose.yml`, set ports to `8080:YOUR_PORT`.
    - In `.github/workflows/commit-stage-monolith.yml`, replace the steps between 'Checkout Repository' and 'Publish Docker Image' with your language's setup and build commands.
-4. Commit and push.
-5. Verify that `commit-stage-monolith` passes.
-6. Verify that `acceptance-stage` passes (trigger manually after Commit Stage succeeds).
+4. Commit and push (CLI):
+   ```bash
+   git add -A && git commit -m "Customize monolith language" && git push
+   ```
+5. Verify that `commit-stage-monolith` passes (CLI):
+   ```bash
+   gh run watch --repo <owner>/<repo>
+   ```
+6. Trigger `acceptance-stage` and verify it passes (CLI):
+   ```bash
+   gh workflow run acceptance-stage.yml --repo <owner>/<repo>
+   gh run watch --repo <owner>/<repo>
+   ```
 
 ### System Test Language
 
@@ -69,8 +94,15 @@
    - Update the `system-test` README.md with instructions to run tests.
    - In `.github/actions/deploy-docker-images/action.yml`, replace the steps after 'Wait for Application to be Ready' with your language setup and smoke test commands.
    - In `.github/workflows/acceptance-stage.yml`, replace the steps after 'Deploy System' with your language setup and E2E test commands.
-4. Commit and push.
-5. Verify that `acceptance-stage` passes (trigger manually with **Force run** selected).
+4. Commit and push (CLI):
+   ```bash
+   git add -A && git commit -m "Customize system test language" && git push
+   ```
+5. Trigger `acceptance-stage` with Force run and verify it passes (CLI):
+   ```bash
+   gh workflow run acceptance-stage.yml --repo <owner>/<repo> -f force_run=true
+   gh run watch --repo <owner>/<repo>
+   ```
 
 > **Why different languages?** It is common for development teams and QA teams to use different languages. For background, see the multi-language template at [greeter-multi-lang](https://github.com/optivem/greeter-multi-lang).
 
@@ -83,8 +115,14 @@
    - Also search for any other references like "accelerator" and "Accelerator"
    - For TypeScript, also update `author`, `license`, `description` in `package.json`
 2. Replace all references with your corresponding namespace and info.
-3. Commit and push.
-4. Verify that `commit-stage-monolith` and `acceptance-stage` workflows still pass.
+3. Commit and push (CLI):
+   ```bash
+   git add -A && git commit -m "Replace template namespaces" && git push
+   ```
+4. Verify that `commit-stage-monolith` and `acceptance-stage` workflows still pass (CLI):
+   ```bash
+   gh run watch --repo <owner>/<repo>
+   ```
 
 ## Checklist
 

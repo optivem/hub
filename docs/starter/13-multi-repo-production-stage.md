@@ -10,7 +10,14 @@ In the job `resolve-docker-images`, find the input `base-image-urls`. For each c
 
 In the step `Tag Docker Images for Production`, set the value `GITHUB_TOKEN: ${{ secrets.DOCKER_REGISTRY_TOKEN }}`.
 
-Manually trigger the PROD Stage and verify it passes.
+Trigger the PROD Stage (CLI):
+
+```bash
+gh workflow run prod-stage.yml --repo <owner>/<repo> -f version=<rc-version>
+gh run watch --repo <owner>/<repo>
+```
+
+Verify that PROD Stage passes.
 
 ## Checklist
 

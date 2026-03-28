@@ -16,7 +16,14 @@ base-image-urls: |
   ghcr.io/${{ github.repository_owner }}/eshop-backend/backend
 ```
 
-Manually trigger the QA Stage and verify it passes.
+Trigger the QA Stage (CLI):
+
+```bash
+gh workflow run qa-stage.yml --repo <owner>/<repo> -f version=<rc-version>
+gh run watch --repo <owner>/<repo>
+```
+
+Verify that the QA Stage passes.
 
 > **Note:** After updating the QA Stage, the Production Stage may still fail because it still references the old image URLs. This is expected — you will update it in the Production Stage multi-repo section. For now, only verify that the QA Stage passes.
 

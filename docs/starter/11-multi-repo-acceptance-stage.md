@@ -4,18 +4,14 @@ For a working example, see the [Greeter Multi Repo](https://github.com/optivem/g
 
 ## 1. Create Token
 
-Create a Personal Access Token (classic) with `write:packages` and `read:packages` scopes:
-
-```bash
-gh auth token  # verify you're logged in
-```
+Create a Personal Access Token (classic) with `write:packages` and `read:packages` scopes (browser — token creation cannot be done via CLI):
 
 1. Go to https://github.com/settings/tokens and click **Generate new token** → **Generate new token (classic)**.
 2. In Note, write: `DOCKER_REGISTRY_TOKEN`
 3. Under Select scopes, tick: `write:packages`, `read:packages`.
 4. Click **Generate token** and copy the token value.
 
-Add the PAT as a secret on your system repository:
+Add the PAT as a secret on your system repository (CLI):
 
 ```bash
 gh secret set DOCKER_REGISTRY_TOKEN --repo <owner>/<system-repo>
@@ -47,15 +43,25 @@ Update `system-test/docker-compose.yml` to reference the component images from t
 
 ## 5. Verify
 
-Commit and push.
+Commit and push (CLI):
 
-Manually trigger `acceptance-stage` (with the "Force run" option).
+```bash
+git add -A && git commit -m "Update acceptance stage for multi-repo" && git push
+```
+
+Trigger `acceptance-stage` with Force run (CLI):
+
+```bash
+gh workflow run acceptance-stage.yml --repo <owner>/<repo> -f force_run=true
+gh run watch --repo <owner>/<repo>
+```
 
 Verify that it is successful.
 
 ## Checklist
 
-1. Acceptance Stage finds latest artifacts from each component's repository
-2. Docker Compose references correct cross-repository image URLs
-3. Cross-repository RC tagging works with `DOCKER_REGISTRY_TOKEN`
-4. `acceptance-stage` workflow completes successfully
+1. `DOCKER_REGISTRY_TOKEN` secret is set
+2. Acceptance Stage finds latest artifacts from each component's repository
+3. Docker Compose references correct cross-repository image URLs
+4. Cross-repository RC tagging works with `DOCKER_REGISTRY_TOKEN`
+5. `acceptance-stage` workflow completes successfully

@@ -4,33 +4,55 @@ For a working example, see the [Greeter](https://github.com/optivem/greeter) tem
 
 ## Setup
 
-Before running the QA stage, create the `qa` GitHub environment in your repository:
+Create the `qa` GitHub environment (CLI):
 
-1. Go to your repository on GitHub.
-2. Click **Settings** → **Environments** → **New environment**.
-3. Name it `qa` and click **Configure environment**.
+```bash
+gh api repos/<owner>/<repo>/environments/qa -X PUT
+```
 
 ## Verify the QA Stage
 
-1. Go to **Actions** on GitHub.
-2. Click on `qa-stage`, then **Run workflow**.
-3. For the version input, enter a valid RC version (find it under **Releases**, e.g. `v0.0.1-rc`).
-4. Click **Run workflow** and wait for completion. If it fails, stop and ask for support.
-5. Go to **Releases**. You should see a release with the suffix `-qa-deployed` (e.g. `v0.0.1-rc-qa-deployed`).
+1. Find the RC version (CLI):
+   ```bash
+   gh release list --repo <owner>/<repo> --limit 5
+   ```
+2. Trigger the QA stage with the RC version (CLI):
+   ```bash
+   gh workflow run qa-stage.yml --repo <owner>/<repo> -f version=<rc-version>
+   ```
+3. Wait for completion (CLI):
+   ```bash
+   gh run watch --repo <owner>/<repo>
+   ```
+   If it fails, stop and ask for support.
+4. Verify the QA deployed release exists (CLI):
+   ```bash
+   gh release list --repo <owner>/<repo> --limit 5
+   ```
+   You should see a release with the suffix `-qa-deployed` (e.g. `v0.0.1-rc-qa-deployed`).
 
 ## Verify QA Signoff
 
 After deployment, the QA Engineer does manual testing (exploratory testing, usability). Once complete:
 
-1. Go to **Actions**, click on `qa-signoff`, then **Run workflow**.
-2. Enter the same version (e.g. `v0.0.1-rc`).
-3. Set the QA result to `approved`.
-4. Click **Run workflow** and wait for completion. If it fails, stop and ask for support.
-5. Go to **Releases**. You should see a prerelease with the suffix `-rc-qa-approved`.
+1. Trigger the QA signoff (CLI):
+   ```bash
+   gh workflow run qa-signoff.yml --repo <owner>/<repo> -f version=<rc-version> -f result=approved
+   ```
+2. Wait for completion (CLI):
+   ```bash
+   gh run watch --repo <owner>/<repo>
+   ```
+3. Verify the QA approved release exists (CLI):
+   ```bash
+   gh release list --repo <owner>/<repo> --limit 5
+   ```
+   You should see a prerelease with the suffix `-rc-qa-approved`.
 
 ## Checklist
 
-1. `qa-stage` workflow completes successfully
-2. Release is marked as QA deployed (e.g. `-rc-qa-deployed`)
-3. `qa-signoff` workflow completes successfully
-4. Release is marked as QA approved (e.g. `-rc-qa-approved`)
+1. `qa` environment exists
+2. `qa-stage` workflow completes successfully
+3. Release is marked as QA deployed (e.g. `-rc-qa-deployed`)
+4. `qa-signoff` workflow completes successfully
+5. Release is marked as QA approved (e.g. `-rc-qa-approved`)
