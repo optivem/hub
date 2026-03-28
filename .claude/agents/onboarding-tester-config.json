@@ -1,9 +1,90 @@
 {
-  "GITHUB_OWNER": "valentinajemuovic",
-  "SYSTEM_DOMAIN": "Book Store",
-  "SYSTEM_NAME": "Page Turner",
-  "MONOLITH_LANGUAGE": "java",
-  "SYSTEM_TEST_LANGUAGE": "java",
-  "ARCHITECTURE": "monolith",
-  "REPOSITORY_STRATEGY": "mono-repo"
+  "defaults": {
+    "GITHUB_OWNER": "valentinajemuovic",
+    "SYSTEM_DOMAIN": "Book Store",
+    "SYSTEM_NAME": "Page Turner"
+  },
+  "batches": {
+    "monolith-single-language": {
+      "description": "Monolith — same language for backend and tests",
+      "scenarios": {
+        "monolith-java": {
+          "ARCHITECTURE": "monolith",
+          "REPOSITORY_STRATEGY": "mono-repo",
+          "BACKEND_LANGUAGE": "java",
+          "SYSTEM_TEST_LANGUAGE": "java"
+        },
+        "monolith-dotnet": {
+          "ARCHITECTURE": "monolith",
+          "REPOSITORY_STRATEGY": "mono-repo",
+          "BACKEND_LANGUAGE": "dotnet",
+          "SYSTEM_TEST_LANGUAGE": "dotnet"
+        },
+        "monolith-typescript": {
+          "ARCHITECTURE": "monolith",
+          "REPOSITORY_STRATEGY": "mono-repo",
+          "BACKEND_LANGUAGE": "typescript",
+          "SYSTEM_TEST_LANGUAGE": "typescript"
+        }
+      }
+    },
+    "monolith-multi-language": {
+      "description": "Monolith — mixed languages (backend vs tests)",
+      "scenarios": {
+        "monolith-java-test-dotnet": {
+          "ARCHITECTURE": "monolith",
+          "REPOSITORY_STRATEGY": "mono-repo",
+          "BACKEND_LANGUAGE": "java",
+          "SYSTEM_TEST_LANGUAGE": "dotnet"
+        },
+        "monolith-java-test-typescript": {
+          "ARCHITECTURE": "monolith",
+          "REPOSITORY_STRATEGY": "mono-repo",
+          "BACKEND_LANGUAGE": "java",
+          "SYSTEM_TEST_LANGUAGE": "typescript"
+        },
+        "monolith-dotnet-test-java": {
+          "ARCHITECTURE": "monolith",
+          "REPOSITORY_STRATEGY": "mono-repo",
+          "BACKEND_LANGUAGE": "dotnet",
+          "SYSTEM_TEST_LANGUAGE": "java"
+        },
+        "monolith-dotnet-test-typescript": {
+          "ARCHITECTURE": "monolith",
+          "REPOSITORY_STRATEGY": "mono-repo",
+          "BACKEND_LANGUAGE": "dotnet",
+          "SYSTEM_TEST_LANGUAGE": "typescript"
+        },
+        "monolith-typescript-test-java": {
+          "ARCHITECTURE": "monolith",
+          "REPOSITORY_STRATEGY": "mono-repo",
+          "BACKEND_LANGUAGE": "typescript",
+          "SYSTEM_TEST_LANGUAGE": "java"
+        },
+        "monolith-typescript-test-dotnet": {
+          "ARCHITECTURE": "monolith",
+          "REPOSITORY_STRATEGY": "mono-repo",
+          "BACKEND_LANGUAGE": "typescript",
+          "SYSTEM_TEST_LANGUAGE": "dotnet"
+        }
+      }
+    },
+    "multi-architecture": {
+      "description": "Multi-component and multi-repo architectures",
+      "scenarios": {
+        "multi-component-java": {
+          "ARCHITECTURE": "multi-component",
+          "REPOSITORY_STRATEGY": "mono-repo",
+          "BACKEND_LANGUAGE": "java",
+          "SYSTEM_TEST_LANGUAGE": "java"
+        },
+        "multi-repo-java": {
+          "ARCHITECTURE": "multi-component",
+          "REPOSITORY_STRATEGY": "multi-repo",
+          "BACKEND_LANGUAGE": "java",
+          "SYSTEM_TEST_LANGUAGE": "java"
+        }
+      }
+    }
+  }
 }

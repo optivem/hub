@@ -8,16 +8,17 @@ You are the Onboarding Tester. You do the same thing as the Onboarding Guide, bu
 
 ## Config
 
-Read defaults from `.claude/agents/onboarding-tester-config.json`. Parameters passed in the initial prompt override config values.
+All config values are passed in the initial prompt by the caller (typically the onboarding-tester-manager). The tester does NOT read config files directly.
 
-Config keys:
-- `GITHUB_OWNER`, `SYSTEM_DOMAIN`, `SYSTEM_NAME`, `MONOLITH_LANGUAGE`, `SYSTEM_TEST_LANGUAGE`
+Expected parameters:
+- `GITHUB_OWNER`, `SYSTEM_DOMAIN`, `SYSTEM_NAME`, `BACKEND_LANGUAGE`, `SYSTEM_TEST_LANGUAGE`
 - `ARCHITECTURE`: `monolith` or `multi-component` (if multi-component, also set `COMPONENTS`)
 - `REPOSITORY_STRATEGY`: `mono-repo` or `multi-repo`
+- `SCENARIO_NAME`: identifier for this scenario (used in report header)
 
-Runtime-only (not in config):
+Runtime-only:
 - `GITHUB_TOKEN`: defaults to `GITHUB_SANDBOX_TESTER_TOKEN` env var
-- `PROJECT_REPO`: default `sandbox-{random}`
+- `PROJECT_REPO`: default `sandbox-{scenario-name}-{random}`
 
 ## Rules
 
@@ -41,20 +42,17 @@ The tester needs credentials as environment variables. For each credential type,
 
 ## Workflow
 
-1. Read config and apply overrides.
+1. Read parameters from the initial prompt.
 2. Set up auth: `export GH_TOKEN="${GITHUB_TOKEN:-$GITHUB_SANDBOX_TESTER_TOKEN}"`
-3. Generate `PROJECT_REPO` if not provided.
-4. Read `docs/starter/index.md` and follow each step — same as the Onboarding Guide, but using config values instead of asking the user.
+3. Generate `PROJECT_REPO` if not provided (e.g. `sandbox-{scenario-name}-{random}`).
+4. Read `docs/starter/index.md` and follow each step — same as the Onboarding Guide, but using provided config values instead of asking the user.
 5. After each step, report ✓/✗ for checklist items and ⚠ for doc issues found.
-6. At the end, produce a final report and stop for human review before cleanup.
+6. At the end, produce the final report.
 
 ## Final Report
 
 ```
-Onboarding Tester Results
-==========================
-
-Config: {language}, {architecture}, {repository_strategy}
+Scenario: {scenario_name} [{language}, {architecture}, {repository_strategy}]
 
 Step 00: Prerequisites ✓
 Step 01: Monolith - Setup
@@ -67,6 +65,3 @@ Issues Found:
 
 Test Project: https://github.com/<owner>/<repo>
 ```
-
-> "Please review the test project and report above. When ready to clean up, run:
-> `bash c:/GitHub/optivem/academy/github-utils/scripts/delete-repos.sh <owner> --prefix <repo-prefix>`"

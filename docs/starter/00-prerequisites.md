@@ -45,7 +45,7 @@ If you are using the onboarding tester agent, set the following environment vari
 
 | Variable | Value |
 |---|---|
-| `GITHUB_SANDBOX_TESTER_TOKEN` | A GitHub personal access token with `repo` scope |
+| `GITHUB_SANDBOX_TESTER_TOKEN` | A GitHub personal access token with `repo` scope (optional if `gh` CLI is already authenticated via `gh auth login`) |
 | `DOCKERHUB_USERNAME` | Your Docker Hub username |
 | `DOCKERHUB_TOKEN` | Your Docker Hub access token |
 | `SONAR_TOKEN` | Your SonarCloud token (can be deferred until SonarCloud Setup step) |
