@@ -39,9 +39,18 @@ Before starting the onboarding, gather the following information and prepare cre
 1. Create a SonarCloud token — see [SonarCloud Setup](02a-monolith-sonarcloud-setup.md) (browser).
 2. Note the token — you'll set it on your repository in the SonarCloud Setup step.
 
-## Environment Variables (for Claude Code / Onboarding Tester)
+## Onboarding Mode
 
-If you are using the onboarding tester agent, set the following environment variables on your machine **before** launching your IDE or Claude Code — they must be present in the shell environment so the agent can read them at runtime.
+You can run the onboarding in one of two modes:
+
+- **Interactive** — the onboarding guide agent will ask you for credentials and project details as needed. No extra setup required — just start the agent and follow the prompts.
+- **Non-interactive** — set environment variables **before** launching your IDE or Claude Code so the agent can read them at runtime without prompting. This is useful if you want a hands-off experience or are running the onboarding tester agent.
+
+If you choose **interactive mode**, skip to the [Checklist](#checklist) — you're ready to go.
+
+### Environment Variables (non-interactive mode)
+
+Set the following environment variables on your machine:
 
 | Variable | Value |
 |---|---|
@@ -72,4 +81,4 @@ After setting them, **restart any open terminals, IDEs, and CLI tools** — runn
 1. Project information is decided
 2. Docker Hub account and access token are ready
 3. SonarCloud token is ready (can be deferred until SonarCloud Setup step)
-4. Environment variables are set and IDE has been restarted (if using onboarding tester)
+4. *(Non-interactive mode only)* Environment variables are set and IDE has been restarted
