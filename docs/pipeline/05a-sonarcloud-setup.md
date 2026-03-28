@@ -6,8 +6,7 @@ All steps use the command line except for the initial one-time SonarCloud sign-i
 
 ## Prerequisites
 
-- A public GitHub repository with a Gradle-based Java project
-- A working Commit Stage workflow (see [Commit Stage](05-commit-stage.md))
+- A public GitHub repository with a working Commit Stage workflow (see [Commit Stage](05-commit-stage.md))
 - `gh` CLI installed and authenticated
 - `curl` available
 
@@ -18,7 +17,7 @@ These are the only steps that require the browser:
 1. Go to [sonarcloud.io](https://sonarcloud.io), click **Log in**, and sign in with your **GitHub** account.
 2. Go to **My Account** → **Security** → **Generate Tokens**, enter a name (e.g. `ci`), click **Generate**, and copy the token.
 
-Export the token for the remaining steps:
+Set the token as an environment variable for the remaining steps:
 
 ```bash
 export SONAR_TOKEN="<your-token>"
@@ -54,7 +53,15 @@ curl -s -u "${SONAR_TOKEN}:" \
   "https://sonarcloud.io/api/projects/search?organization=${SONAR_ORG}" | jq '.components[].key'
 ```
 
-## 4. Add GitHub Secrets and Variables (CLI)
+## 4. Select Analysis Method (UI)
+
+After creating the project, SonarCloud will prompt you to choose an analysis method:
+
+1. Go to your project on [sonarcloud.io](https://sonarcloud.io).
+2. Select **With GitHub Actions**.
+3. You can skip the setup instructions shown — the steps below cover everything needed.
+
+## 5. Add GitHub Secrets and Variables (CLI)
 
 Run these from your repository root:
 
@@ -70,7 +77,13 @@ gh secret list
 gh variable list
 ```
 
-## 5. Add Gradle Plugins
+## 6. Configure the Build
+
+Follow the section for your language below.
+
+---
+
+### Java (Gradle)
 
 In your `monolith/build.gradle`, add the `jacoco` and `org.sonarqube` plugins:
 
@@ -85,9 +98,7 @@ plugins {
 }
 ```
 
-## 6. Configure JaCoCo (Code Coverage)
-
-Add the following after your `test` task configuration:
+Configure JaCoCo for code coverage and Sonar properties:
 
 ```gradle
 tasks.named('test') {
@@ -101,15 +112,7 @@ jacocoTestReport {
         xml.required = true
     }
 }
-```
 
-JaCoCo generates an XML coverage report that SonarCloud uses to display code coverage metrics.
-
-## 7. Configure Sonar Properties
-
-Add the following block to `monolith/build.gradle`:
-
-```gradle
 sonar {
     properties {
         property 'sonar.projectKey', '<your-org>_<your-repo>'
@@ -120,11 +123,27 @@ sonar {
 }
 ```
 
-Replace `<your-org>` and `<your-repo>` with the values from Steps 2 and 3.
+Replace `<your-org>` and `<your-repo>` with your values from Steps 2 and 3.
 
-## 8. Add the Code Analysis Step to CI
+---
 
-In your `.github/workflows/commit-stage-monolith.yml`, replace the "Run Code Analysis" placeholder step with:
+### .NET
+
+No build file changes are needed. The `dotnet-sonarscanner` tool is installed and run directly in CI (see Step 7).
+
+---
+
+### TypeScript (Node.js)
+
+No build file changes are needed. The `sonar-scanner` is run via `npx` directly in CI (see Step 7).
+
+---
+
+## 7. Add the Code Analysis Step to CI
+
+In your `.github/workflows/commit-stage-monolith.yml`, replace the "Run Code Analysis" placeholder step with the section for your language below.
+
+### Java (Gradle)
 
 ```yaml
       - name: Run Code Analysis
@@ -136,9 +155,39 @@ In your `.github/workflows/commit-stage-monolith.yml`, replace the "Run Code Ana
           SONAR_HOST_URL: ${{ vars.SONAR_HOST_URL }}
 ```
 
-This runs code analysis only on pushes to `main` (not on pull requests), since SonarCloud free tier analyzes the default branch.
+### .NET
 
-## 9. Verify
+```yaml
+      - name: Run Code Analysis
+        if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+        run: |
+          dotnet tool install --global dotnet-sonarscanner
+          dotnet sonarscanner begin /k:"<your-org>_<your-repo>" /o:"<your-org>" /d:sonar.token="${SONAR_TOKEN}" /d:sonar.host.url="${SONAR_HOST_URL}"
+          dotnet build <your-project>.csproj
+          dotnet sonarscanner end /d:sonar.token="${SONAR_TOKEN}"
+        working-directory: monolith
+        env:
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+          SONAR_HOST_URL: ${{ vars.SONAR_HOST_URL }}
+```
+
+Replace `<your-org>`, `<your-repo>`, and `<your-project>.csproj` with your values.
+
+### TypeScript (Node.js)
+
+```yaml
+      - name: Run Code Analysis
+        if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+        run: npx sonar-scanner -Dsonar.projectKey=<your-org>_<your-repo> -Dsonar.organization=<your-org> -Dsonar.sources=src -Dsonar.javascript.lcov.reportPaths=coverage/lcov.info
+        working-directory: monolith
+        env:
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+          SONAR_HOST_URL: ${{ vars.SONAR_HOST_URL }}
+```
+
+Replace `<your-org>` and `<your-repo>` with your values.
+
+## 8. Verify
 
 Commit and push, then check the workflow:
 
@@ -174,6 +223,6 @@ curl -s -u "${SONAR_TOKEN}:" \
 
 Common issues:
 - **"Not authorized"** — Verify `SONAR_TOKEN` is correct (`gh secret list` to check it exists).
-- **"Project not found"** — Verify `sonar.projectKey` and `sonar.organization` in `build.gradle` match the values from Steps 2–3.
-- **No coverage data** — Make sure `jacocoTestReport` runs before `sonar` and that the XML report path is correct.
+- **"Project not found"** — Verify the project key and organization match between your build config and SonarCloud.
+- **No coverage data** — Ensure tests run and produce coverage reports before the sonar step.
 - **Analysis not appearing** — SonarCloud free tier only analyzes public repositories. Check: `gh repo view --json visibility -q '.visibility'`
