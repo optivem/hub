@@ -102,7 +102,18 @@ gh secret list
 
 When you open your new project on [sonarcloud.io](https://sonarcloud.io), SonarCloud will show an onboarding wizard with instructions for setting up the GitHub secret, build file, and CI workflow. **You can skip this** — the greeter templates already include the SonarCloud configuration in the build file (`build.gradle` / `package.json`) and the commit stage workflow. The onboarding will disappear automatically after the first successful analysis.
 
-## 6. Verify
+## 6. Workflow Condition
+
+The Code Analysis step in the commit stage workflow should run on the main branch regardless of how the workflow was triggered (push, manual dispatch, etc.). Use `github.ref` only — do **not** restrict by event type:
+
+```yaml
+- name: Run Code Analysis
+  if: github.ref == 'refs/heads/main'
+```
+
+Do **not** use `github.event_name == 'push' && github.ref == 'refs/heads/main'` — this would skip code analysis on manual workflow runs (`workflow_dispatch`), which is unexpected.
+
+## 7. Verify
 
 Commit and push, then check the workflow:
 
@@ -135,6 +146,20 @@ for PROJECT in $(curl -s -u "${SONAR_TOKEN}:" \
     -d "project=${PROJECT}&name=main"
 done
 ```
+
+If the rename fails with `a branch with name "main" already exists`, it means a previous analysis already created `main` as a short-lived branch. Delete it first, then rename:
+
+```bash
+curl -s -u "${SONAR_TOKEN}:" \
+  -X POST "https://sonarcloud.io/api/project_branches/delete" \
+  -d "project=${SONAR_PROJECT}&branch=main"
+
+curl -s -u "${SONAR_TOKEN}:" \
+  -X POST "https://sonarcloud.io/api/project_branches/rename" \
+  -d "project=${SONAR_PROJECT}&name=main"
+```
+
+After renaming the default branch, SonarCloud may show the onboarding wizard again. This is normal — it disappears after the next successful analysis on the `main` branch. Push a commit or trigger the workflow manually to resolve it.
 
 To verify the branch configuration for all projects:
 
