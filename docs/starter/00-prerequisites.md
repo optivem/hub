@@ -39,8 +39,37 @@ Before starting the onboarding, gather the following information and prepare cre
 1. Create a SonarCloud token — see [SonarCloud Setup](02a-monolith-sonarcloud-setup.md) (browser).
 2. Note the token — you'll set it on your repository in the SonarCloud Setup step.
 
+## Environment Variables (for Claude Code / Onboarding Tester)
+
+If you are using the onboarding tester agent, set the following environment variables on your machine **before** launching your IDE or Claude Code — they must be present in the shell environment so the agent can read them at runtime.
+
+| Variable | Value |
+|---|---|
+| `GITHUB_SANDBOX_TESTER_TOKEN` | A GitHub personal access token with `repo` scope |
+| `DOCKERHUB_USERNAME` | Your Docker Hub username |
+| `DOCKERHUB_TOKEN` | Your Docker Hub access token |
+| `SONAR_TOKEN` | Your SonarCloud token (can be deferred until SonarCloud Setup step) |
+
+How to set them depends on your OS:
+
+- **Windows** — add them as User environment variables via System Settings > Environment Variables, or in PowerShell:
+  ```powershell
+  [Environment]::SetEnvironmentVariable("DOCKERHUB_USERNAME", "your-username", "User")
+  [Environment]::SetEnvironmentVariable("DOCKERHUB_TOKEN", "dckr_pat_...", "User")
+  [Environment]::SetEnvironmentVariable("GITHUB_SANDBOX_TESTER_TOKEN", "ghp_...", "User")
+  ```
+- **macOS / Linux** — add `export` lines to your shell profile (`~/.bashrc`, `~/.zshrc`, etc.):
+  ```bash
+  export DOCKERHUB_USERNAME="your-username"
+  export DOCKERHUB_TOKEN="dckr_pat_..."
+  export GITHUB_SANDBOX_TESTER_TOKEN="ghp_..."
+  ```
+
+After setting them, **restart any open terminals, IDEs, and CLI tools** — running processes do not pick up new environment variables automatically.
+
 ## Checklist
 
 1. Project information is decided
 2. Docker Hub account and access token are ready
 3. SonarCloud token is ready (can be deferred until SonarCloud Setup step)
+4. Environment variables are set and IDE has been restarted (if using onboarding tester)
