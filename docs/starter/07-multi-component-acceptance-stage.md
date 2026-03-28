@@ -14,10 +14,10 @@ Commit and push (CLI):
 git add -A && git commit -m "Update acceptance stage for multi-component" && git push
 ```
 
-Trigger `acceptance-stage` with Force run (CLI):
+Trigger `acceptance-stage` (CLI):
 
 ```bash
-gh workflow run acceptance-stage.yml --repo <owner>/<repo> -f force_run=true
+gh workflow run acceptance-stage.yml --repo <owner>/<repo>
 gh run watch --repo <owner>/<repo>
 ```
 

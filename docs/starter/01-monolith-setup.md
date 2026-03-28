@@ -25,9 +25,15 @@
    ```bash
    grep -rl "optivem/greeter-{language}" . --include="*.yml" --include="*.yaml" --include="*.md" --include="*.gradle" --include="*.gradle.kts" | xargs sed -i 's|optivem/greeter-{language}|<owner>/<repo>|g'
    ```
+   Also replace the underscore variant (used by SonarCloud config) and standalone `optivem` org reference (CLI):
+   ```bash
+   grep -rl "optivem_greeter-{language}" . --include="*.yml" --include="*.yaml" --include="*.gradle" --include="*.gradle.kts" | xargs sed -i 's|optivem_greeter-{language}|<owner>_<repo>|g'
+   grep -rl "sonar.organization.*optivem\|/o:\"optivem\"\|/o:.*optivem" . --include="*.yml" --include="*.yaml" --include="*.gradle" --include="*.gradle.kts" | xargs sed -i "s|optivem|<owner>|g"
+   ```
    This covers `.yml` files (including `docker-compose.yml` and workflow files), `.md` files, and `.gradle`/`.gradle.kts` files (including SonarCloud config):
    - In the README file, so that the status badges point to your workflows (not the template workflows)
    - In `system-test/docker-compose.yml`, to reference your Docker Image (not the template image)
+   - In SonarCloud config (`sonar.projectKey` and `sonar.organization`), so analysis runs under your organization
 4. In the Docker Compose file, ensure that everything is lowercase in the image url.
 5. Add credentials and variables to your repository (CLI):
    ```bash
@@ -90,19 +96,18 @@
 2. **If your target language is Java, .NET, or TypeScript:**
    - Find the target template in [Starter Templates](#starter-templates) above.
    - Delete everything in `system-test` **except** `docker-compose.yml`.
-   - Copy from the target template: `system-test` folder (except `docker-compose.yml`), `.github/actions/deploy-docker-images/action.yml`, `.github/workflows/acceptance-stage.yml`.
+   - Copy from the target template: `system-test` folder (except `docker-compose.yml`), `.github/workflows/acceptance-stage.yml`.
 3. **If your target language is something else:**
    - Rewrite the `system-test` folder in your target language. Check Playwright language support; switch to Selenium if needed.
    - Update the `system-test` README.md with instructions to run tests.
-   - In `.github/actions/deploy-docker-images/action.yml`, replace the steps after 'Wait for Application to be Ready' with your language setup and smoke test commands.
    - In `.github/workflows/acceptance-stage.yml`, replace the steps after 'Deploy System' with your language setup and E2E test commands.
 4. Commit and push (CLI):
    ```bash
    git add -A && git commit -m "Customize system test language" && git push
    ```
-5. Trigger `acceptance-stage` with Force run and verify it passes (CLI):
+5. Trigger `acceptance-stage` and verify it passes (CLI):
    ```bash
-   gh workflow run acceptance-stage.yml --repo <owner>/<repo> -f force_run=true
+   gh workflow run acceptance-stage.yml --repo <owner>/<repo>
    gh run watch --repo <owner>/<repo>
    ```
 
@@ -116,6 +121,8 @@
    - TypeScript: `@optivem/greeter-system-test`
    - Also search for any other references like "accelerator" and "Accelerator"
    - For TypeScript, also update `author`, `license`, `description` in `package.json`
+   - For .NET, also check `.cshtml` (Razor views) and `Dockerfile` — these contain namespace and project references
+   - For TypeScript, also check `Dockerfile` — it may contain project references
 2. Replace all references with your corresponding namespace and info.
    - Also update the README title (e.g. "Greeter (Java)" → your system name and language).
 3. Commit and push (CLI):
