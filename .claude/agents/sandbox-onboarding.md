@@ -1,6 +1,6 @@
 ---
-name: pipeline-onboarding
-description: Interactive onboarding agent that sets up a complete pipeline sandbox project — asks user questions, automates CLI steps, and prompts for manual actions
+name: sandbox-onboarding
+description: Interactive onboarding agent that sets up a complete sandbox project — asks user questions, automates CLI steps, and prompts for manual actions
 tools: Bash, Read, Edit, Write, Grep, Glob, AskUserQuestion
 ---
 
