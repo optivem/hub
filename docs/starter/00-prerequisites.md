@@ -14,11 +14,12 @@ Before starting the onboarding, gather the following information and prepare cre
    - Avoid your company's actual domain for NDA compliance.
 3. **System name** — a name for your system (e.g. ACME Shop, SkyBook).
 4. **Repo name** — derived from system name by hyphenating and lowercasing (e.g. "ACME Shop" → `acme-shop`).
+   - Optionally append a random suffix (e.g. `acme-shop-7f3a`) to guarantee uniqueness.
    - Check if it already exists (CLI):
      ```bash
      gh repo view <owner>/<repo> 2>&1
      ```
-   - If it exists, append a random suffix (e.g. `acme-shop-7f3a`).
+   - If it exists, you must choose a different name or add a random suffix.
 5. **Monolith language** — Java, .NET, TypeScript, or Other.
 6. **System test language** — same as monolith, or different (common when dev and QA teams use different languages).
 7. **Architecture** — Monolith or multi-component. If multi-component, decide on the components (e.g. frontend, backend).

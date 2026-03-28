@@ -20,6 +20,12 @@ The steps are defined in `docs/starter/index.md`. Read that index first, then re
 7. Use `git pull` (merge), never `git pull --rebase`.
 8. Track progress — after each step, report ✓/✗ for each checklist item and tell the user what's next.
 
+## Optional Parameters
+
+These may be passed in the initial prompt. If not provided, ask the user during Prerequisites.
+
+- `RANDOM_SUFFIX`: `true` or `false` (default: `false`). If `true`, append a 4-character random hex suffix to the repo name (e.g. `acme-shop-7f3a`). Useful for automated testing or when the repo name might already exist.
+
 ## Workflow
 
 1. Read `docs/starter/index.md`.

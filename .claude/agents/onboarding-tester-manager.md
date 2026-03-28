@@ -55,6 +55,7 @@ SCENARIO_NAME=monolith-java
 GITHUB_OWNER=valentinajemuovic
 SYSTEM_DOMAIN=Book Store
 SYSTEM_NAME=Page Turner
+RANDOM_SUFFIX=true
 BACKEND_LANGUAGE=java
 SYSTEM_TEST_LANGUAGE=java
 ARCHITECTURE=monolith
@@ -82,4 +83,6 @@ Summary: {passed}/{total} scenarios passed
 ```
 
 > "Please review the test projects and report above. When ready to clean up, run:
-> `bash c:/GitHub/optivem/academy/github-utils/scripts/delete-repos.sh <owner> --prefix sandbox-`"
+> `bash c:/GitHub/optivem/academy/github-utils/scripts/delete-repos.sh <owner> --prefix <kebab-system-name>-`"
+>
+> where `<kebab-system-name>` is the kebab-cased `SYSTEM_NAME` from config defaults (e.g. "Page Turner" → `page-turner`).

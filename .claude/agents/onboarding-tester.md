@@ -16,9 +16,11 @@ Expected parameters:
 - `REPOSITORY_STRATEGY`: `mono-repo` or `multi-repo`
 - `SCENARIO_NAME`: identifier for this scenario (used in report header)
 
+Defaults (always passed by the tester):
+- `RANDOM_SUFFIX`: `true` — always append a random suffix to avoid collisions between test runs
+
 Runtime-only:
 - `GITHUB_TOKEN`: defaults to `GITHUB_SANDBOX_TESTER_TOKEN` env var
-- `PROJECT_REPO`: default `sandbox-{scenario-name}-{random}`
 
 ## Rules
 
@@ -34,8 +36,7 @@ Same as Onboarding Guide (including: do NOT use anything from memory), plus:
 
 1. Read parameters from the initial prompt.
 2. Set up auth: `export GH_TOKEN="${GITHUB_TOKEN:-$GITHUB_SANDBOX_TESTER_TOKEN}"`
-3. Generate `PROJECT_REPO` if not provided (e.g. `sandbox-{scenario-name}-{random}`).
-4. Read `docs/starter/index.md` and follow each step — same as the Onboarding Guide, but using provided config values instead of asking the user.
+3. Read `docs/starter/index.md` and follow each step — same as the Onboarding Guide, but using provided config values instead of asking the user. The repo name must be derived from `SYSTEM_NAME` exactly as the docs describe (kebab-case + random suffix if needed) — do NOT invent your own naming scheme.
 5. After each step, report ✓/✗ for checklist items and ⚠ for doc issues found.
 6. At the end, produce the final report.
 
