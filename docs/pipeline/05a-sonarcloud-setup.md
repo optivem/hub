@@ -91,19 +91,9 @@ Verify:
 gh secret list
 ```
 
-## 5. Follow SonarCloud's Onboarding Instructions (UI)
+## 5. SonarCloud Onboarding (informational)
 
-SonarCloud provides tailored setup instructions for your specific language and build tool:
-
-1. Go to your project on [sonarcloud.io](https://sonarcloud.io).
-2. Select **With GitHub Actions** as the analysis method.
-3. SonarCloud will show you step-by-step instructions for:
-   - Creating the GitHub secret (already done in Step 4)
-   - Updating your build file (e.g. `build.gradle`, `.csproj`, `package.json`)
-   - Creating or updating your CI workflow file
-4. Follow the build file and CI workflow instructions for your language.
-
-**Important**: When adding the CI step, add it to your existing `commit-stage-monolith.yml` workflow (replacing the "Run Code Analysis" placeholder step) rather than creating a new workflow file as SonarCloud suggests.
+When you open your new project on [sonarcloud.io](https://sonarcloud.io), SonarCloud will show an onboarding wizard with instructions for setting up the GitHub secret, build file, and CI workflow. **You can skip this** — the greeter templates already include the SonarCloud configuration in the build file (`build.gradle` / `package.json`) and the commit stage workflow. The onboarding will disappear automatically after the first successful analysis.
 
 ## 6. Verify
 
