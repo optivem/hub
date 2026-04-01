@@ -8,7 +8,7 @@ body:
       label: Project
       description: Select your project.
       options:
-        - eShop
+        - eShop Starter
         - Car Charging Reservation System
         - Budget OK
         - CTF
