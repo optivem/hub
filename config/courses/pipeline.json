@@ -95,13 +95,13 @@
           "number": "03",
           "label": "03-smoke-tests",
           "name": "Smoke Tests",
-          "url": "https://optivem.thinkific.com/courses/take/pipeline/texts/70100844-multi-component-qa-stage"
+          "url": "https://optivem.thinkific.com/courses/take/pipeline/texts/70100844-smoke-tests"
         },
         {
           "number": "04",
           "label": "04-e2e-tests",
           "name": "E2E Tests",
-          "url": ""
+          "url": "https://optivem.thinkific.com/courses/take/pipeline/texts/73800807-e2e-tests"
         },
         {
           "number": "05",
@@ -133,7 +133,7 @@
           "number": "03",
           "label": "03-qa-signoff",
           "name": "QA Signoff 🔖",
-          "url": ""
+          "url": "https://optivem.thinkific.com/courses/take/pipeline/texts/73800825-qa-signoff"
         }
       ]
     },

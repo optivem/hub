@@ -81,13 +81,13 @@
           "number": "02",
           "label": "02-system-ui-smoke-test",
           "name": "System UI Smoke Test 🔖",
-          "url": ""
+          "url": "https://optivem.thinkific.com/courses/take/atdd/texts/73673635-system-ui-smoke-test"
         },
         {
           "number": "03",
           "label": "03-external-system-smoke-tests",
           "name": "External System Smoke Tests 🔖",
-          "url": ""
+          "url": "https://optivem.thinkific.com/courses/take/atdd/texts/73485021-external-system-smoke-tests"
         },
         {
           "number": "04",
@@ -131,7 +131,7 @@
           "number": "05",
           "label": "05-external-system-limitations",
           "name": "External System Limitations",
-          "url": ""
+          "url": "https://optivem.thinkific.com/courses/take/atdd/texts/70108034-external-system-limitations"
         },
         {
           "number": "06",
@@ -169,31 +169,31 @@
           "number": "04",
           "label": "04-system-api-smoke-tests",
           "name": "System API Smoke Tests 🔖",
-          "url": ""
+          "url": "https://optivem.thinkific.com/courses/take/atdd/texts/70850580-system-api-smoke-tests"
         },
         {
           "number": "05",
           "label": "05-system-ui-smoke-tests",
           "name": "System UI Smoke Tests 🔖",
-          "url": ""
+          "url": "https://optivem.thinkific.com/courses/take/atdd/texts/70341398-system-ui-smoke-tests"
         },
         {
           "number": "06",
           "label": "06-external-system-smoke-tests",
           "name": "External System Smoke Tests",
-          "url": ""
+          "url": "https://optivem.thinkific.com/courses/take/atdd/texts/70102047-external-system-smoke-tests"
         },
         {
           "number": "07",
           "label": "07-e2e-api-tests",
           "name": "E2E API Tests",
-          "url": ""
+          "url": "https://optivem.thinkific.com/courses/take/atdd/texts/70341449-e2e-api-tests"
         },
         {
           "number": "08",
           "label": "08-e2e-ui-tests",
           "name": "E2E UI Tests",
-          "url": ""
+          "url": "https://optivem.thinkific.com/courses/take/atdd/texts/70341416-e2e-ui-tests"
         },
         {
           "number": "09",
@@ -225,19 +225,19 @@
           "number": "03",
           "label": "03-system-smoke-tests",
           "name": "System Smoke Tests 🔖",
-          "url": ""
+          "url": "https://optivem.thinkific.com/courses/take/atdd/texts/70847211-system-smoke-tests"
         },
         {
           "number": "04",
           "label": "04-external-system-smoke-tests",
           "name": "External System Smoke Tests",
-          "url": ""
+          "url": "https://optivem.thinkific.com/courses/take/atdd/texts/70847514-external-system-smoke-tests"
         },
         {
           "number": "05",
           "label": "05-e2e-tests",
           "name": "E2E Tests",
-          "url": ""
+          "url": "https://optivem.thinkific.com/courses/take/atdd/texts/70847220-e2e-tests"
         },
         {
           "number": "06",
@@ -263,13 +263,13 @@
           "number": "02",
           "label": "02-system-smoke-tests",
           "name": "System Smoke Tests 🔖",
-          "url": "https://optivem.thinkific.com/courses/take/atdd/texts/70114454-e2e-tests"
+          "url": "https://optivem.thinkific.com/courses/take/atdd/texts/70114442-system-smoke-tests"
         },
         {
           "number": "03",
           "label": "03-e2e-tests",
           "name": "E2E Tests",
-          "url": ""
+          "url": "https://optivem.thinkific.com/courses/take/atdd/texts/70114454-e2e-tests"
         },
         {
           "number": "04",
@@ -295,19 +295,19 @@
           "number": "02",
           "label": "02-system-smoke-tests",
           "name": "System Smoke Tests",
-          "url": "https://optivem.thinkific.com/courses/take/atdd/texts/73673681-external-system-smoke-tests"
+          "url": "https://optivem.thinkific.com/courses/take/atdd/texts/73673676-system-smoke-tests"
         },
         {
           "number": "03",
           "label": "03-external-system-smoke-tests",
           "name": "External System Smoke Tests",
-          "url": ""
+          "url": "https://optivem.thinkific.com/courses/take/atdd/texts/73673681-external-system-smoke-tests"
         },
         {
           "number": "04",
           "label": "04-e2e-tests",
           "name": "E2E Tests",
-          "url": ""
+          "url": "https://optivem.thinkific.com/courses/take/atdd/texts/73673682-e2e-tests"
         }
       ]
     },
@@ -333,19 +333,19 @@
           "number": "03",
           "label": "03-system-smoke-tests",
           "name": "System Smoke Tests 🔖",
-          "url": ""
+          "url": "https://optivem.thinkific.com/courses/take/atdd/texts/73673690-system-smoke-tests"
         },
         {
           "number": "04",
           "label": "04-external-system-smoke-tests",
           "name": "External System Smoke Tests",
-          "url": ""
+          "url": "https://optivem.thinkific.com/courses/take/atdd/texts/73673694-external-system-smoke-tests"
         },
         {
           "number": "05",
           "label": "05-e2e-tests",
           "name": "E2E Tests 🔖",
-          "url": ""
+          "url": "https://optivem.thinkific.com/courses/take/atdd/texts/73673697-e2e-tests"
         }
       ]
     },
@@ -377,13 +377,13 @@
           "number": "04",
           "label": "04-external-systems-stub",
           "name": "External Systems — Stub",
-          "url": ""
+          "url": "https://optivem.thinkific.com/courses/take/atdd/texts/73673713-external-systems-stub"
         },
         {
           "number": "05",
           "label": "05-external-system-smoke-tests-stub",
           "name": "External System Smoke Tests — Stub",
-          "url": ""
+          "url": "https://optivem.thinkific.com/courses/take/atdd/texts/73673725-external-system-smoke-tests-stub"
         },
         {
           "number": "06",
@@ -453,7 +453,7 @@
           "number": "03",
           "label": "03-e2e-tests-cleanup",
           "name": "E2E Tests Cleanup",
-          "url": ""
+          "url": "https://optivem.thinkific.com/courses/take/atdd/texts/73620971-e2e-tests-cleanup"
         },
         {
           "number": "04",
@@ -473,7 +473,7 @@
           "number": "01",
           "label": "01-acceptance-criteria",
           "name": "Acceptance Criteria",
-          "url": "https://optivem.thinkific.com/courses/take/atdd/texts/73487343-three-amigos-session"
+          "url": "https://optivem.thinkific.com/courses/take/atdd/texts/73487567-acceptance-criteria"
         }
       ]
     },
