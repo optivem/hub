@@ -1,5 +1,5 @@
-const { readFileSync, readdirSync } = require("fs");
-const { join } = require("path");
+const { readFileSync, readdirSync } = require("node:fs");
+const { join } = require("node:path");
 
 function loadConfig(rootDir) {
   const configDir = join(rootDir, "config");

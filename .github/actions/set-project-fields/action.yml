@@ -1,0 +1,117 @@
+name: Set Project Fields
+description: Sets Course, Sandbox Project, and Module fields on a project item.
+
+inputs:
+  issue-node-id:
+    description: The GraphQL node ID of the issue.
+    required: true
+  course-id:
+    description: The course id (e.g. "pipeline", "atdd").
+    required: true
+  project-key:
+    description: The sandbox project key (e.g. "BDOK").
+    required: true
+  module-num:
+    description: The module number (e.g. "02").
+    required: true
+  github-token:
+    description: Token with project write access.
+    required: true
+
+runs:
+  using: composite
+  steps:
+    - name: Set fields
+      uses: actions/github-script@v8
+      env:
+        GH_TOKEN: ${{ inputs.github-token }}
+        ISSUE_NODE_ID: ${{ inputs.issue-node-id }}
+        COURSE_ID: ${{ inputs.course-id }}
+        PROJECT_KEY: ${{ inputs.project-key }}
+        MODULE_NUM: ${{ inputs.module-num }}
+      with:
+        github-token: ${{ inputs.github-token }}
+        script: |
+          const { loadConfig } = require('./scripts/load-config.cjs');
+          const config = loadConfig('.');
+          const { id: projectId, courses: boardCourses } = config.board;
+
+          const courseId = process.env.COURSE_ID;
+          const projectKey = (process.env.PROJECT_KEY || '').toUpperCase();
+          const moduleNum = process.env.MODULE_NUM;
+
+          const courseOptionName = courseId ? courseId.toUpperCase() : null;
+          const project = config.projects.find(p => p.key.toUpperCase() === projectKey);
+          const sandboxProjectOptionName = project ? `${project.key} — ${project.name}` : null;
+          const course = config.courses.find(c => c.id === courseId);
+          const mod = course?.modules.find(m => m.number === moduleNum);
+          const moduleOptionName = mod ? `${mod.number} - ${mod.name}` : null;
+
+          const schemaRes = await github.graphql(`
+            query($projectId: ID!) {
+              node(id: $projectId) {
+                ... on ProjectV2 {
+                  fields(first: 50) {
+                    nodes {
+                      ... on ProjectV2SingleSelectField {
+                        id name options { id name }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          `, { projectId });
+          const fieldsByName = new Map();
+          for (const f of schemaRes.node.fields.nodes) {
+            if (f?.name) fieldsByName.set(f.name, f);
+          }
+
+          const itemRes = await github.graphql(`
+            query($issueId: ID!) {
+              node(id: $issueId) {
+                ... on Issue {
+                  projectItems(first: 10) {
+                    nodes { id project { id } }
+                  }
+                }
+              }
+            }
+          `, { issueId: process.env.ISSUE_NODE_ID });
+          const item = itemRes.node.projectItems.nodes.find(n => n.project.id === projectId);
+          if (!item) {
+            core.warning('Issue not found on project board');
+            return;
+          }
+
+          async function setField(fieldName, desiredOption) {
+            if (!desiredOption) {
+              core.warning(`Skipping ${fieldName}: could not resolve option name`);
+              return;
+            }
+            const field = fieldsByName.get(fieldName);
+            if (!field) {
+              core.warning(`Field "${fieldName}" not found on project`);
+              return;
+            }
+            const opt = field.options.find(o => o.name === desiredOption);
+            if (!opt) {
+              core.warning(`Option "${desiredOption}" not found for field "${fieldName}"`);
+              return;
+            }
+            await github.graphql(`
+              mutation($projectId: ID!, $itemId: ID!, $fieldId: ID!, $optionId: String!) {
+                updateProjectV2ItemFieldValue(input: {
+                  projectId: $projectId, itemId: $itemId, fieldId: $fieldId,
+                  value: { singleSelectOptionId: $optionId }
+                }) { projectV2Item { id } }
+              }
+            `, { projectId, itemId: item.id, fieldId: field.id, optionId: opt.id });
+            core.info(`Set ${fieldName} = "${desiredOption}"`);
+          }
+
+          if (boardCourses && boardCourses.length > 1) {
+            await setField('Course', courseOptionName);
+          }
+          await setField('Sandbox Project', sandboxProjectOptionName);
+          await setField('Module', moduleOptionName);

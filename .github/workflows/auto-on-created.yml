@@ -143,6 +143,15 @@ jobs:
           status: In Review
           github-token: ${{ secrets.PROJECT_TOKEN }}
 
+      - name: Set project fields
+        uses: ./.github/actions/set-project-fields
+        with:
+          issue-node-id: ${{ github.event.issue.node_id }}
+          course-id: ${{ needs.validate.outputs.course-id }}
+          project-key: ${{ needs.validate.outputs.project-key }}
+          module-num: ${{ needs.validate.outputs.module-num }}
+          github-token: ${{ secrets.PROJECT_TOKEN }}
+
       # TODO: Re-enable assignee assignment
       # - name: Assign team members
       #   uses: ./.github/actions/assign-issue

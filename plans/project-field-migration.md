@@ -26,16 +26,9 @@ Processing rule: remove each item from this file as it is executed; delete the f
 
 ## Phase 2 — Auto-populate fields on new issues
 
-Currently `.github/workflows/auto-on-created.yml` applies `project-*`, `course-*`, `module-*` labels to new issues but does not set the corresponding project fields. Result: new tickets land with labels only; fields stay blank until `sync-project-items.mjs` is re-run manually.
+- [ ] Verify on a test issue end-to-end: create issue from template → labels applied → fields populated (Course/Sandbox Project/Module set on the board item)
 
-- [ ] Extend `auto-on-created.yml` to set the three fields after adding the issue to the project
-  - Option A: inline GraphQL in the workflow using `gh api graphql`
-  - Option B: extract a new composite action `.github/actions/set-project-fields` (inputs: `issue-node-id`, `course-id`, `project-key`, `module-num`; action looks up the field/option IDs at runtime and sets each via `updateProjectV2ItemFieldValue`)
-  - Recommendation: Option B, mirrors the existing `set-project-status` action pattern
-- [ ] Update `set-project-status` workflow callers if the new composite action handles Status too (probably out of scope — keep separate)
-- [ ] Verify on a test issue end-to-end: create issue from template → labels applied → fields populated
-
-APPROVED
+Composite action `.github/actions/set-project-fields` and the wiring in `auto-on-created.yml` are in place. This item is the live-fire verification.
 
 ---
 
@@ -57,15 +50,6 @@ WAIT
 
 ---
 
-## Phase 4 — Bookkeeping
-
-- [ ] Minor: replace `fs`/`path` imports in `scripts/load-config.{mjs,cjs}` with `node:fs`/`node:path` (pre-existing linter warnings)
-- [ ] Minor: consider adding `sync-project` / `sync-project-items` to `scripts/sync.mjs` orchestrator as dry-run-only steps (mirrors how `sync-labels` is included). Value is low since both are run directly when schema changes.
-
-APPROVED
-
----
-
 ## Reference — completed in this migration
 
 For audit trail only (do not re-do):
@@ -77,3 +61,6 @@ For audit trail only (do not re-do):
 - `sync-project.mjs` and `sync-project-items.mjs` added; both default to dry-run with explicit `--add` flag
 - `sync-labels.mjs` split from single `--apply` into granular `--add` / `--update` / `--delete`
 - `set-project-status` action updated to read option IDs from `config.board.statusOptionIds`
+- Composite action `.github/actions/set-project-fields` created; wired into `auto-on-created.yml` to auto-populate Course, Sandbox Project, Module on new issues
+- `scripts/load-config.{mjs,cjs}` switched to `node:fs`/`node:path` prefixes
+- `scripts/sync.mjs` orchestrator extended with `project-schema` and `project-items` dry-run steps
