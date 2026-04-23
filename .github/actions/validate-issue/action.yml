@@ -43,7 +43,7 @@ runs:
   steps:
     - name: Validate
       id: validate
-      uses: actions/github-script@v8
+      uses: actions/github-script@v9
       env:
         INPUT_USERNAME: ${{ inputs.username }}
         INPUT_BODY: ${{ inputs.body }}

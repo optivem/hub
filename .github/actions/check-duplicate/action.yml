@@ -34,7 +34,7 @@ runs:
   steps:
     - name: Search for duplicates on board
       id: check
-      uses: actions/github-script@v8
+      uses: actions/github-script@v9
       env:
         GH_TOKEN: ${{ inputs.github-token }}
       with:

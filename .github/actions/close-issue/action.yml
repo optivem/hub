@@ -21,7 +21,7 @@ runs:
   using: composite
   steps:
     - name: Comment and close
-      uses: actions/github-script@v8
+      uses: actions/github-script@v9
       env:
         INPUT_BODY: ${{ inputs.body }}
       with:

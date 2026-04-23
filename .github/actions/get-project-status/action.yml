@@ -22,7 +22,7 @@ runs:
   steps:
     - name: Get status
       id: get
-      uses: actions/github-script@v8
+      uses: actions/github-script@v9
       env:
         GH_TOKEN: ${{ inputs.github-token }}
         ISSUE_NODE_ID: ${{ inputs.issue-node-id }}
