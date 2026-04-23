@@ -26,23 +26,10 @@ const COLORS = {
 // GitHub default labels — never delete, never recolor
 const PROTECTED = new Set(config.labels.githubDefaults);
 
-// Build expected labels from config
+// Build expected labels from config.
+// project-*/course-*/module-* are no longer used — Project 18 fields
+// (Course, Sandbox Project, Module) carry that metadata.
 const expected = new Map();
-
-for (const p of config.projects) {
-  expected.set(`project-${p.key.toLowerCase()}`, COLORS.project);
-}
-
-for (const c of config.courses) {
-  expected.set(`course-${c.id}`, COLORS.course);
-}
-
-for (const c of config.courses) {
-  for (const m of c.modules) {
-    const moduleKey = m.label || m.number;
-    expected.set(`module-${moduleKey}`, COLORS.module);
-  }
-}
 
 for (const reason of config.labels.closedReasons) {
   expected.set(`closed-${reason}`, COLORS.closed);
