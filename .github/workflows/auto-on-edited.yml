@@ -2,7 +2,7 @@ name: auto-on-edited
 
 on:
   issues:
-    types: [labeled, unlabeled, assigned, unassigned, milestoned, demilestoned]
+    types: [assigned, unassigned, milestoned, demilestoned]
 
 jobs:
   guard:
@@ -10,22 +10,6 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v6
-
-      # Empty label.name means the label was deleted org-wide (cascade event,
-      # not a user action) — nothing to revert and nothing to warn about.
-      - name: Revert label added
-        if: github.event.action == 'labeled' && github.event.label.name != ''
-        uses: ./.github/actions/remove-label
-        with:
-          issue-number: ${{ github.event.issue.number }}
-          label: ${{ github.event.label.name }}
-
-      - name: Revert label removed
-        if: github.event.action == 'unlabeled' && github.event.label.name != ''
-        uses: ./.github/actions/add-label
-        with:
-          issue-number: ${{ github.event.issue.number }}
-          label: ${{ github.event.label.name }}
 
       - name: Revert assignee added
         if: github.event.action == 'assigned'
@@ -53,20 +37,6 @@ jobs:
         with:
           issue-number: ${{ github.event.issue.number }}
           milestone: ${{ github.event.milestone.number }}
-
-      - name: Warn - label added
-        if: github.event.action == 'labeled' && github.event.label.name != ''
-        uses: ./.github/actions/comment-on-issue
-        with:
-          issue-number: ${{ github.event.issue.number }}
-          body: "> [!WARNING]\n> @${{ github.event.sender.login }}, you added the label **${{ github.event.label.name }}**. Labels are managed automatically — your change has been reverted."
-
-      - name: Warn - label removed
-        if: github.event.action == 'unlabeled' && github.event.label.name != ''
-        uses: ./.github/actions/comment-on-issue
-        with:
-          issue-number: ${{ github.event.issue.number }}
-          body: "> [!WARNING]\n> @${{ github.event.sender.login }}, you removed the label **${{ github.event.label.name }}**. Labels are managed automatically — your change has been reverted."
 
       - name: Warn - assignee added
         if: github.event.action == 'assigned'
