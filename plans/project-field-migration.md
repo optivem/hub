@@ -17,10 +17,6 @@ APPPROVED
 
 ## Phase 3 — Deferred / optional
 
-- [ ] Prune old label families (destructive — requires explicit approval)
-  - Labels to delete: `project-*` (8), `course-*` (2), `module-*` (~15)
-  - Precondition: Phase 2 in place for at least one review cycle, no workflow still relying on these labels
-  - Use `sync-labels.mjs --delete` (safety check: only deletes labels with zero issues attached)
 - [ ] Discussions setup on `optivem/hub`
   - Categories: `Pipeline Q&A` (Q&A), `ATDD Q&A` (Q&A), `Announcements` (Announcement), `General` (Open-ended)
   - Align with the parked hub-privacy plan (activates 2026-07-02 per memory)
@@ -47,3 +43,7 @@ For audit trail only (do not re-do):
 - Composite action `.github/actions/set-project-fields` created; wired into `auto-on-created.yml` to auto-populate Course, Sandbox Project, Module on new issues
 - `scripts/load-config.{mjs,cjs}` switched to `node:fs`/`node:path` prefixes
 - `scripts/sync.mjs` orchestrator extended with `project-schema` and `project-items` dry-run steps
+- `scripts/generate-dashboard.mjs` rewritten to read `Course` / `Sandbox Project` / `Module` / `Status` from project fields instead of `course-*` / `project-*` / `module-*` labels
+- `actions/check-duplicate` and `actions/check-prerequisites` rewritten to query the project board (no label reads)
+- `auto-on-created.yml` no longer adds `project-*` / `course-*` / `module-*` labels on new issues
+- `sync-labels.mjs` no longer manages `project-*` / `course-*` / `module-*`; the 30 corresponding labels were deleted org-wide
