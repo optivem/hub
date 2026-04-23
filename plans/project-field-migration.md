@@ -26,26 +26,3 @@ APPPROVED
 
 
 WAIT
-
----
-
-## Reference — completed in this migration
-
-For audit trail only (do not re-do):
-- Renamed config: `statusOptionIds` (was `statusOptions`), `Sandbox Project` (was `Student Project`)
-- Consolidated `config/board.json` as the single board config; removed `config/boards/`
-- Created and then deleted temporary per-course boards (GitHub Projects 24 and 25)
-- Added `Course`, `Sandbox Project`, `Module` fields to Project 18 with correct options
-- Populated field values on all 45 existing items, Status copied from current values
-- `sync-project.mjs` added (default dry-run, explicit `--add` to apply)
-- `set-project-status` action updated to read option IDs from `config.board.statusOptionIds`
-- Composite action `.github/actions/set-project-fields` created; wired into `auto-on-created.yml` to auto-populate Course, Sandbox Project, Module on new issues
-- `scripts/load-config.{mjs,cjs}` switched to `node:fs`/`node:path` prefixes
-- `scripts/sync.mjs` orchestrator extended with `project-schema` dry-run step
-- `scripts/generate-dashboard.mjs` rewritten to read fields instead of labels
-- `actions/check-duplicate` and `actions/check-prerequisites` rewritten to query the project board
-- Labels fully eliminated from the codebase:
-  - `auto-on-created.yml` no longer writes any labels (project-/course-/module-/closed-*)
-  - `auto-on-edited.yml` label anti-tampering dropped (no longer triggers on labeled/unlabeled events)
-  - `sync-labels.mjs`, `sync-labels.yml` workflow, `add-labels`/`add-label`/`remove-label` actions, `config/labels.json`, `sync-project-items.mjs` all deleted as orphaned
-  - 33 custom labels deleted org-wide (8 project-*, 2 course-*, 20 module-*, 3 closed-*); only GitHub default labels remain unused
