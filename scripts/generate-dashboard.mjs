@@ -77,9 +77,7 @@ function displayName(github) {
 }
 
 function statusPoints(status) {
-  if (status === "Done") return 1;
-  if (status === "In Review" || status === "In Progress") return 0.5;
-  return 0;
+  return status === "Done" ? 1 : 0;
 }
 
 function pct(done, total) {
