@@ -1,0 +1,11 @@
+{
+  "id": "example",
+  "name": "TDD Fundamentals",
+  "courseSlug": "example",
+  "url": "https://your-lms.example.com/courses/tdd-fundamentals",
+  "modules": [
+    { "number": "01", "label": "01-introduction", "name": "Introduction", "url": "" },
+    { "number": "02", "label": "02-red-green-refactor", "name": "Red, Green, Refactor", "url": "" }
+  ],
+  "projectKeys": ["DEMO"]
+}

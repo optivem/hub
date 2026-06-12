@@ -14,11 +14,16 @@ runs:
   steps:
     - name: Add assignee
       uses: actions/github-script@v9
+      env:
+        # Pass inputs via env (NOT interpolated into the script) so values
+        # can't break or inject JS.
+        ISSUE_NUMBER: ${{ inputs.issue-number }}
+        ASSIGNEE: ${{ inputs.assignee }}
       with:
         script: |
           await github.rest.issues.addAssignees({
             owner: context.repo.owner,
             repo: context.repo.repo,
-            issue_number: ${{ inputs.issue-number }},
-            assignees: ['${{ inputs.assignee }}']
+            issue_number: Number(process.env.ISSUE_NUMBER),
+            assignees: [process.env.ASSIGNEE]
           });

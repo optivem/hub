@@ -13,6 +13,9 @@ outputs:
   is-valid:
     description: "'true' if the creator is a member or reviewer for the selected project."
     value: ${{ steps.validate.outputs.is_valid }}
+  reason:
+    description: "When invalid: incomplete | unknown-project | not-member (empty when valid)."
+    value: ${{ steps.validate.outputs.reason }}
   project-name:
     description: The project name.
     value: ${{ steps.validate.outputs.project_name }}
@@ -68,6 +71,7 @@ runs:
 
           if (isBlank(selectedProject) || isBlank(selectedModule)) {
             core.setOutput('is_valid', 'false');
+            core.setOutput('reason', 'incomplete');
             return;
           }
 
@@ -82,12 +86,14 @@ runs:
           );
           if (!team) {
             core.setOutput('is_valid', 'false');
+            core.setOutput('reason', 'unknown-project');
             return;
           }
 
           const isMember = team.members.some(m => m.toLowerCase() === creator.toLowerCase());
           if (!isMember && !isReviewer) {
             core.setOutput('is_valid', 'false');
+            core.setOutput('reason', 'not-member');
             return;
           }
 

@@ -20,7 +20,7 @@
  * Usage: node scripts/sync-issue-template.mjs
  */
 
-import { writeFileSync } from "node:fs";
+import { writeFileSync, mkdirSync } from "node:fs";
 import { join, dirname } from "node:path";
 import { fileURLToPath } from "node:url";
 import { loadConfig } from "./load-config.mjs";
@@ -32,7 +32,7 @@ const config = loadConfig(ROOT);
 
 // Sentinel first option + default: 0 forces the user to actively pick
 // something other than this placeholder. validate-issue rejects the
-// sentinel. Keep the exact string in sync with SENTINEL_RE in
+// sentinel. Keep the exact strings in sync with SENTINEL_RE in
 // .github/actions/validate-issue/action.yml.
 const PROJECT_PLACEHOLDER = '        - "— Select a project —"';
 const MODULE_PLACEHOLDER  = '        - "— Select a module —"';
@@ -97,8 +97,11 @@ ${moduleOptions}
 `;
 }
 
+const outDir = join(ROOT, ".github", "ISSUE_TEMPLATE");
+mkdirSync(outDir, { recursive: true });
+
 for (const course of config.courses) {
-  const outPath = join(ROOT, ".github", "ISSUE_TEMPLATE", `${course.id}-sandbox-review.yml`);
+  const outPath = join(outDir, `${course.id}-sandbox-review.yml`);
   writeFileSync(outPath, renderTemplate(course), "utf-8");
   console.log(`Wrote ${outPath}: ${course.modules.length} modules.`);
 }

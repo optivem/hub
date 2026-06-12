@@ -1,12 +1,28 @@
 name: auto-on-edited
 
+# Locks down assignees and milestones: these board fields are managed
+# automatically, so any manual change by a human is reverted and the actor
+# is warned. (Bot-originated changes are ignored to avoid revert loops.)
+
 on:
   issues:
     types: [assigned, unassigned, milestoned, demilestoned]
 
 jobs:
+  # Skip on the unconfigured template repo (ships only *.example.json).
+  # A real deployment commits config/board.json, which flips `configured` to 'true'.
+  gate:
+    runs-on: ubuntu-latest
+    outputs:
+      configured: ${{ steps.check.outputs.configured }}
+    steps:
+      - uses: actions/checkout@v6
+      - id: check
+        uses: ./.github/actions/check-configured
+
   guard:
-    if: github.event.sender.type != 'Bot'
+    needs: gate
+    if: needs.gate.outputs.configured == 'true' && github.event.sender.type != 'Bot'
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v6

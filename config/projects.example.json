@@ -1,0 +1,9 @@
+[
+  {
+    "key": "DEMO",
+    "name": "Acme Widget Service",
+    "repo": "https://github.com/your-org/acme-widget",
+    "lead": "octocat",
+    "members": ["octocat", "monalisa"]
+  }
+]

@@ -5,8 +5,20 @@ on:
     types: [created]
 
 jobs:
+  # Skip on the unconfigured template repo (ships only *.example.json).
+  # A real deployment commits config/board.json, which flips `configured` to 'true'.
+  gate:
+    runs-on: ubuntu-latest
+    outputs:
+      configured: ${{ steps.check.outputs.configured }}
+    steps:
+      - uses: actions/checkout@v6
+      - id: check
+        uses: ./.github/actions/check-configured
+
   update-status:
-    if: ${{ !github.event.issue.pull_request }}
+    needs: gate
+    if: needs.gate.outputs.configured == 'true' && !github.event.issue.pull_request
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v6

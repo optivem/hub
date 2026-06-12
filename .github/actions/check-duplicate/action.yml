@@ -6,7 +6,7 @@ inputs:
     description: The current issue number (to exclude from search).
     required: true
   project-key:
-    description: The sandbox project key (e.g. "BDOK").
+    description: The sandbox project key (e.g. "DEMO").
     required: true
   course-id:
     description: The course id (e.g. "atdd", "pipeline").
@@ -37,6 +37,10 @@ runs:
       uses: actions/github-script@v9
       env:
         GH_TOKEN: ${{ inputs.github-token }}
+        COURSE_ID: ${{ inputs.course-id }}
+        PROJECT_KEY: ${{ inputs.project-key }}
+        MODULE_NUM: ${{ inputs.module-num }}
+        ISSUE_NUMBER: ${{ inputs.issue-number }}
       with:
         github-token: ${{ inputs.github-token }}
         script: |
@@ -44,10 +48,10 @@ runs:
           const config = loadConfig('.');
           const projectId = config.board.id;
           const checkCourseField = (config.board.courses?.length || 0) > 1;
-          const courseFieldValue = '${{ inputs.course-id }}'.toUpperCase();
-          const projectKey = '${{ inputs.project-key }}'.toUpperCase();
-          const moduleNum = '${{ inputs.module-num }}';
-          const currentNumber = ${{ inputs.issue-number }};
+          const courseFieldValue = process.env.COURSE_ID.toUpperCase();
+          const projectKey = process.env.PROJECT_KEY.toUpperCase();
+          const moduleNum = process.env.MODULE_NUM;
+          const currentNumber = Number(process.env.ISSUE_NUMBER);
 
           let cursor = null;
           let earliest = null;

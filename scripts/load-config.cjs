@@ -11,7 +11,7 @@ function loadConfig(rootDir) {
 
   const coursesDir = join(configDir, "courses");
   const courses = readdirSync(coursesDir)
-    .filter(f => f.endsWith(".json"))
+    .filter(f => f.endsWith(".json") && !f.endsWith(".example.json"))
     .sort()
     .map(f => JSON.parse(readFileSync(join(coursesDir, f), "utf-8")));
 

@@ -15,13 +15,18 @@ runs:
   steps:
     - name: Set milestone
       uses: actions/github-script@v9
+      env:
+        # Pass inputs via env (NOT interpolated into the script) so values
+        # can't break or inject JS.
+        ISSUE_NUMBER: ${{ inputs.issue-number }}
+        MILESTONE: ${{ inputs.milestone }}
       with:
         script: |
-          const milestoneInput = '${{ inputs.milestone }}';
+          const milestoneInput = process.env.MILESTONE;
           const milestone = milestoneInput ? parseInt(milestoneInput, 10) : null;
           await github.rest.issues.update({
             owner: context.repo.owner,
             repo: context.repo.repo,
-            issue_number: ${{ inputs.issue-number }},
+            issue_number: Number(process.env.ISSUE_NUMBER),
             milestone
           });

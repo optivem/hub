@@ -1,0 +1,22 @@
+{
+  "title": "Acme Code School",
+  "board": {
+    "owner": "your-org-or-username",
+    "id": "PVT_replace_me",
+    "number": 0,
+    "url": "",
+    "statusFieldId": "PVTSSF_replace_me",
+    "statusOptionIds": {
+      "IN_PROGRESS": "",
+      "IN_REVIEW": "",
+      "DONE": ""
+    },
+    "courses": ["example"]
+  },
+  "statuses": [
+    { "key": "OPEN", "name": "Open" },
+    { "key": "IN_PROGRESS", "name": "In Progress" },
+    { "key": "IN_REVIEW", "name": "In Review" },
+    { "key": "DONE", "name": "Done" }
+  ]
+}

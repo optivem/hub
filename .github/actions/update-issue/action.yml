@@ -26,17 +26,26 @@ runs:
   steps:
     - name: Update title and body
       uses: actions/github-script@v9
+      env:
+        # Pass inputs via env (NOT interpolated into the script) so values
+        # containing quotes/apostrophes/backticks can't break or inject JS.
+        PROJECT_KEY: ${{ inputs.project-key }}
+        PROJECT_NAME: ${{ inputs.project-name }}
+        REPO_URL: ${{ inputs.repo-url }}
+        SELECTED_MODULE: ${{ inputs.module }}
+        COURSE_ID: ${{ inputs.course-id }}
+        ISSUE_NUMBER: ${{ inputs.issue-number }}
       with:
         script: |
           const fs = require('fs');
           const { loadConfig } = require('./scripts/load-config.cjs');
-          const projectKey = '${{ inputs.project-key }}';
-          const projectName = '${{ inputs.project-name }}';
-          const repoUrl = '${{ inputs.repo-url }}';
-          const selectedModule = '${{ inputs.module }}';
+          const projectKey = process.env.PROJECT_KEY;
+          const projectName = process.env.PROJECT_NAME;
+          const repoUrl = process.env.REPO_URL;
+          const selectedModule = process.env.SELECTED_MODULE;
           const moduleNum = selectedModule.split(' - ')[0];
 
-          const courseId = '${{ inputs.course-id }}';
+          const courseId = process.env.COURSE_ID;
           const config = loadConfig('.');
           const course = config.courses.find(c => c.id === courseId);
           const courseName = course ? course.name : courseId;
@@ -57,7 +66,7 @@ runs:
           await github.rest.issues.update({
             owner: context.repo.owner,
             repo: context.repo.repo,
-            issue_number: ${{ inputs.issue-number }},
+            issue_number: Number(process.env.ISSUE_NUMBER),
             title: newTitle,
             body
           });

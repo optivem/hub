@@ -5,10 +5,25 @@ on:
     types: [opened]
 
 jobs:
-  validate:
+  # Skip everything on the unconfigured template repo (it ships only *.example.json).
+  # A real deployment commits config/board.json, which flips `configured` to 'true'.
+  # Gating `validate` cascade-skips every downstream job (they all need it).
+  gate:
     runs-on: ubuntu-latest
     outputs:
+      configured: ${{ steps.check.outputs.configured }}
+    steps:
+      - uses: actions/checkout@v6
+      - id: check
+        uses: ./.github/actions/check-configured
+
+  validate:
+    runs-on: ubuntu-latest
+    needs: gate
+    if: needs.gate.outputs.configured == 'true'
+    outputs:
       is-valid: ${{ steps.validate.outputs.is-valid }}
+      reason: ${{ steps.validate.outputs.reason }}
       project-key: ${{ steps.validate.outputs.project-key }}
       project-name: ${{ steps.validate.outputs.project-name }}
       project-url: ${{ steps.validate.outputs.project-url }}
@@ -67,12 +82,32 @@ jobs:
     steps:
       - uses: actions/checkout@v6
 
-      - name: Close unauthorized issue
+      - name: Compose rejection message
+        id: msg
+        uses: actions/github-script@v9
+        env:
+          REASON: ${{ needs.validate.outputs.reason }}
+          ISSUE_USER: ${{ github.event.issue.user.login }}
+        with:
+          script: |
+            const reason = process.env.REASON;
+            const user = process.env.ISSUE_USER;
+            const why = {
+              'incomplete': 'you did not select a valid **Project** and **Module** (the placeholder option was left selected).',
+              'unknown-project': 'the selected project was not recognized.',
+              'not-member': 'you are not a member of the selected project.',
+            }[reason] || 'the submission could not be validated.';
+            core.setOutput('body',
+              `> [!CAUTION]\n> ## ❌ Issue Rejected\n> Hi @${user}, ${why}\n>\n` +
+              `> If you believe this is an error, please contact the course administrator.\n>\n` +
+              `> **This issue has been closed automatically.**`);
+
+      - name: Close invalid issue
         uses: ./.github/actions/close-issue
         with:
           issue-number: ${{ github.event.issue.number }}
           title: "INVALID | ${{ github.event.issue.title }}"
-          body: "> [!CAUTION]\n> ## ❌ Issue Rejected\n> Hi @${{ github.event.issue.user.login }}, you are not a member of the selected project.\n>\n> If you believe this is an error, please contact [Valentina Jemuović](https://github.com/valentinajemuovic).\n>\n> **This issue has been closed automatically.**"
+          body: ${{ steps.msg.outputs.body }}
 
   close-duplicate:
     runs-on: ubuntu-latest

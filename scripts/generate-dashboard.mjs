@@ -1,6 +1,7 @@
 #!/usr/bin/env node
 
 import { readFileSync, writeFileSync, mkdirSync } from "fs";
+import { createHash } from "node:crypto";
 import { join, dirname } from "path";
 import { fileURLToPath } from "url";
 import { loadConfig } from "./load-config.mjs";
@@ -515,17 +516,29 @@ async function main() {
 
   const template = readFileSync(join(__dirname, "dashboard-template.html"), "utf-8");
   const css = readFileSync(join(__dirname, "dashboard.css"), "utf-8");
-  const version = Date.now().toString();
+  const sectionsHtml = sections.join("\n");
+  const cardsHtml = cards.join("\n");
+  const summaryHtml = generateSummaryTable(courses, matrices, sortedProjects);
+  const pinnedHtml = renderPinnedBanner(pinned);
+
+  // Content-hash version: changes only when the dashboard's data-derived content
+  // changes, so the refresh workflow commits docs/ only on real changes (no churn).
+  const version = createHash("sha256")
+    .update(sectionsHtml + cardsHtml + summaryHtml + pinnedHtml + config.title)
+    .digest("hex")
+    .slice(0, 12);
+
   const html = template
     .replace("{{DASHBOARD_CSS}}", css)
     .replace("{{LAST_UPDATED}}", new Date().toUTCString())
     .replace("{{VERSION}}", version)
-    .replace("{{PINNED_BANNER}}", renderPinnedBanner(pinned))
-    .replace("{{SUMMARY_TABLE}}", generateSummaryTable(courses, matrices, sortedProjects))
-    .replace("{{COURSE_SECTIONS}}", sections.join("\n"))
-    .replace("{{COURSE_CARDS}}", cards.join("\n"))
+    .replace("{{PINNED_BANNER}}", pinnedHtml)
+    .replace("{{SUMMARY_TABLE}}", summaryHtml)
+    .replace("{{COURSE_SECTIONS}}", sectionsHtml)
+    .replace("{{COURSE_CARDS}}", cardsHtml)
     .replaceAll("{{TITLE}}", escapeHtml(config.title))
     .replace("{{BOARD_URL}}", escapeHtml(config.board.url))
+    .replaceAll("{{COURSES_URL}}", escapeHtml(config.courses[0]?.url || config.board.url))
     .replaceAll("{{GITHUB_OWNER}}", GITHUB_OWNER)
     .replaceAll("{{GITHUB_REPO}}", GITHUB_REPO);
 

@@ -9,7 +9,7 @@ inputs:
     description: The course id (e.g. "pipeline", "atdd").
     required: true
   project-key:
-    description: The sandbox project key (e.g. "BDOK").
+    description: The sandbox project key (e.g. "DEMO").
     required: true
   module-num:
     description: The module number (e.g. "02").

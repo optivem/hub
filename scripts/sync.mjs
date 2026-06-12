@@ -1,83 +1,36 @@
 #!/usr/bin/env node
 
 /**
- * Sync all hub data derived from the courses repo.
- * Runs the local sync scripts in order:
+ * Orchestrate the local sync steps that regenerate derived files from config/.
+ * Runs every step, or a subset with --only=<name>[,<name>...].
  *
- *   1. sync-course-structure.mjs  → config/courses/*.json (modules)
- *   2. sync-checklists.mjs        → checklists/{courseId}/{NN}.md
- *   3. sync-issue-template.mjs    → .github/ISSUE_TEMPLATE/review-request.yml
- *   4. sync-student-urls.mjs      → config/courses/*.json (url fields, from courses/generated/student-urls.json)
- *   5. sync-project.mjs       (DRY-RUN) → project field schema drift
- *
- * The last step is DRY-RUN inside this orchestrator because it mutates
- * GitHub remote state (not local files). To apply changes, run it
- * directly:
- *   node scripts/sync-project.mjs --add
- *
- * Student-view URL *scraping* lives in the courses repo
- * (`courses/tools/scrape-student-urls.ts`) because it needs Playwright
- * + interactive login. Run that script separately when URLs change; its
- * output is committed as `courses/generated/student-urls.json` and this
- * orchestrator applies it to the hub configs.
- *
- * The dashboard (docs/index.html) is built and deployed in CI by
- * .github/workflows/dashboard.yml — it is not regenerated here.
+ * Steps grow as the engine grows (issue templates today; checklists, board
+ * field sync, dashboard to follow).
  *
  * Usage:
- *   node scripts/sync.mjs                         # run all steps
- *   node scripts/sync.mjs --only checklists       # run one step
- *   node scripts/sync.mjs --only structure,urls   # run multiple steps (comma-separated)
- *
- * Step names: structure, checklists, issue-template, urls, project-schema
+ *   node scripts/sync.mjs                  # run all steps
+ *   node scripts/sync.mjs --only=issue-template
  */
 
-import { dirname, join } from "node:path";
-import { fileURLToPath, pathToFileURL } from "node:url";
+import { spawnSync } from "node:child_process";
+import { join, dirname } from "node:path";
+import { fileURLToPath } from "node:url";
 
-const __dirname = dirname(fileURLToPath(import.meta.url));
+const ROOT = join(dirname(fileURLToPath(import.meta.url)), "..");
 
 const STEPS = [
-  { key: "structure",      label: "Course structure",        file: "./sync-course-structure.mjs" },
-  { key: "checklists",     label: "Review checklists",       file: "./sync-checklists.mjs" },
-  { key: "issue-template", label: "Issue template",          file: "./sync-issue-template.mjs" },
-  { key: "urls",           label: "Student URLs",            file: "./sync-student-urls.mjs" },
-  { key: "project-schema", label: "Project schema (dry-run)", file: "./sync-project.mjs" },
+  { name: "issue-template", script: "sync-issue-template.mjs" },
 ];
 
-function extractOnly() {
-  // Strip --only <value> from process.argv so sub-scripts see a clean argv
-  // (they read process.argv[2] as the courses-root override).
-  const idx = process.argv.indexOf("--only");
-  if (idx === -1) return null;
-  const value = process.argv[idx + 1];
-  if (!value) {
-    console.error("--only requires a value (comma-separated step names)");
-    process.exit(1);
+const onlyArg = process.argv.find(a => a.startsWith("--only="));
+const only = onlyArg ? onlyArg.split("=")[1].split(",").map(s => s.trim()) : null;
+
+for (const step of STEPS) {
+  if (only && !only.includes(step.name)) continue;
+  console.log(`\n→ ${step.name}`);
+  const r = spawnSync(process.execPath, [join(ROOT, "scripts", step.script)], { stdio: "inherit" });
+  if (r.status !== 0) {
+    console.error(`✗ ${step.name} failed`);
+    process.exit(r.status ?? 1);
   }
-  process.argv.splice(idx, 2);
-  const requested = value.split(",").map(s => s.trim()).filter(Boolean);
-  const valid = new Set(STEPS.map(s => s.key));
-  const unknown = requested.filter(s => !valid.has(s));
-  if (unknown.length) {
-    console.error(`Unknown step(s): ${unknown.join(", ")}. Valid: ${[...valid].join(", ")}`);
-    process.exit(1);
-  }
-  return new Set(requested);
-}
-
-const only = extractOnly();
-const selected = only ? STEPS.filter(s => only.has(s.key)) : STEPS;
-
-// Orchestrator always runs mutating syncs in dry-run mode.
-// (To apply schema changes, invoke sync-project.mjs directly with --add.)
-// Strip these flags so sub-scripts that read argv[2] as courses-root don't misread them.
-for (const flag of ["--apply", "--add", "--update", "--delete"]) {
-  const idx = process.argv.indexOf(flag);
-  if (idx !== -1) process.argv.splice(idx, 1);
-}
-
-for (const step of selected) {
-  console.log(`\n── ${step.label} ──`);
-  await import(pathToFileURL(join(__dirname, step.file)).href);
 }

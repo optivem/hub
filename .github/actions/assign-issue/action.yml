@@ -14,12 +14,20 @@ runs:
   steps:
     - name: Assign
       uses: actions/github-script@v9
+      env:
+        # Pass inputs via env (NOT interpolated into the script) so values
+        # can't break or inject JS.
+        ISSUE_NUMBER: ${{ inputs.issue-number }}
+        ASSIGNEES: ${{ inputs.assignees }}
       with:
         script: |
-          const assignees = '${{ inputs.assignees }}'.split(',');
+          const assignees = process.env.ASSIGNEES
+            .split(',')
+            .map(a => a.trim())
+            .filter(Boolean);
           await github.rest.issues.addAssignees({
             owner: context.repo.owner,
             repo: context.repo.repo,
-            issue_number: ${{ inputs.issue-number }},
+            issue_number: Number(process.env.ISSUE_NUMBER),
             assignees
           });

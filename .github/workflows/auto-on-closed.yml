@@ -5,8 +5,21 @@ on:
     types: [closed]
 
 jobs:
+  # Skip on the unconfigured template repo (ships only *.example.json).
+  # A real deployment commits config/board.json, which flips `configured` to 'true'.
+  gate:
+    runs-on: ubuntu-latest
+    outputs:
+      configured: ${{ steps.check.outputs.configured }}
+    steps:
+      - uses: actions/checkout@v6
+      - id: check
+        uses: ./.github/actions/check-configured
+
   handle-close:
     runs-on: ubuntu-latest
+    needs: gate
+    if: needs.gate.outputs.configured == 'true'
     steps:
       - uses: actions/checkout@v6
 
@@ -29,7 +42,7 @@ jobs:
         uses: ./.github/actions/comment-on-issue
         with:
           issue-number: ${{ github.event.issue.number }}
-          body: "🎉 Your Sandbox Project module **${{ github.event.issue.title }}** is **DONE**! The updated status will be shown on the [Dashboard](https://optivem.github.io/hub/)."
+          body: "🎉 Your Sandbox Project module **${{ github.event.issue.title }}** is **DONE**! The updated status will be shown on the dashboard."
 
       - name: Reopen and notify if closed by student
         if: steps.check.outputs.is-reviewer == 'false'

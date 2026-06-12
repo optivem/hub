@@ -23,23 +23,29 @@ runs:
     - name: Comment and close
       uses: actions/github-script@v9
       env:
+        # All inputs via env (never interpolated into the script) — the title is
+        # user-controlled (the issue title), so inlining it could break/inject JS.
         INPUT_BODY: ${{ inputs.body }}
+        INPUT_TITLE: ${{ inputs.title }}
+        ISSUE_NUMBER: ${{ inputs.issue-number }}
+        STATE_REASON: ${{ inputs.state-reason }}
       with:
         script: |
+          const issueNumber = Number(process.env.ISSUE_NUMBER);
           await github.rest.issues.createComment({
             owner: context.repo.owner,
             repo: context.repo.repo,
-            issue_number: ${{ inputs.issue-number }},
+            issue_number: issueNumber,
             body: process.env.INPUT_BODY
           });
 
           const updateParams = {
             owner: context.repo.owner,
             repo: context.repo.repo,
-            issue_number: ${{ inputs.issue-number }},
+            issue_number: issueNumber,
             state: 'closed',
-            state_reason: '${{ inputs.state-reason }}'
+            state_reason: process.env.STATE_REASON
           };
-          const newTitle = `${{ inputs.title }}`;
+          const newTitle = process.env.INPUT_TITLE;
           if (newTitle) updateParams.title = newTitle;
           await github.rest.issues.update(updateParams);

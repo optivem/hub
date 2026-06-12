@@ -30,7 +30,12 @@ runs:
       id: check
       uses: actions/github-script@v9
       env:
+        # Pass inputs via env (NOT interpolated into the script) so values
+        # can't break or inject JS.
         GH_TOKEN: ${{ inputs.github-token }}
+        PROJECT_KEY: ${{ inputs.project-key }}
+        COURSE_ID: ${{ inputs.course-id }}
+        MODULE_NUM: ${{ inputs.module-num }}
       with:
         github-token: ${{ inputs.github-token }}
         script: |
@@ -38,10 +43,10 @@ runs:
           const config = loadConfig('.');
           const projectId = config.board.id;
           const checkCourseField = (config.board.courses?.length || 0) > 1;
-          const courseId = '${{ inputs.course-id }}';
+          const courseId = process.env.COURSE_ID;
           const courseFieldValue = courseId.toUpperCase();
-          const projectKey = '${{ inputs.project-key }}'.toUpperCase();
-          const moduleNum = '${{ inputs.module-num }}';
+          const projectKey = (process.env.PROJECT_KEY || '').toUpperCase();
+          const moduleNum = process.env.MODULE_NUM;
 
           const course = config.courses.find(c => c.id === courseId);
           if (!course) {

@@ -1,0 +1,24 @@
+name: Check Configured
+description: >
+  Outputs whether this repo is a configured deployment (config/board.json present)
+  or the unconfigured template (ships only *.example.json). Callers gate their real
+  jobs on the `configured` output so the public template's Actions stay green.
+
+outputs:
+  configured:
+    description: "'true' if config/board.json exists, else 'false'."
+    value: ${{ steps.check.outputs.configured }}
+
+runs:
+  using: composite
+  steps:
+    - name: Check for deployment config
+      id: check
+      shell: bash
+      run: |
+        if [ -f config/board.json ]; then
+          echo "configured=true" >> "$GITHUB_OUTPUT"
+        else
+          echo "configured=false" >> "$GITHUB_OUTPUT"
+          echo "::notice::config/board.json absent — unconfigured template repo; skipping."
+        fi
