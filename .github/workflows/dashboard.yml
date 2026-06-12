@@ -1,5 +1,13 @@
 name: dashboard
 
+# Model A — Cloudflare Pages builds the dashboard. This workflow's only job is
+# to POST the Cloudflare deploy hook so CF rebuilds (running generate-dashboard
+# on CF, pulling fresh board data). The generated HTML never enters git.
+#
+# No `push` trigger: Cloudflare already rebuilds automatically on every push to
+# the production branch, so we only need to nudge it on the *non-push* events
+# (ticket lifecycle + discussions) plus a periodic safety-net refresh.
+
 on:
   workflow_run:
     workflows:
@@ -12,51 +20,26 @@ on:
     types: [completed]
   discussion:
     types: [pinned, unpinned, edited, deleted]
-  push:
-    branches: [main]
   schedule:
-    - cron: '*/30 * * * *'  # every 30 minutes
+    - cron: '*/30 * * * *'  # safety-net refresh every 30 minutes
   workflow_dispatch:
 
 permissions:
   contents: read
-  pages: write
-  id-token: write
 
-# Serialize runs but do NOT cancel in-flight ones: bursts of ticket events
-# must each complete their deploy so Pages converges to the latest state.
-# Runs are cheap (~20s), so queueing is preferable to mid-flight cancellation.
+# Serialize but never cancel in-flight: each event must converge the dashboard
+# to latest. Hook pings are cheap, so queue rather than cancel.
 concurrency:
   group: dashboard
   cancel-in-progress: false
 
 jobs:
-  build:
+  refresh:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v6
-
-      - uses: actions/setup-node@v6
-        with:
-          node-version: 20
-
-      - name: Generate dashboard
+      - name: Ping Cloudflare Pages to rebuild
         env:
-          GITHUB_TOKEN: ${{ secrets.PROJECT_TOKEN }}
-          GITHUB_OWNER: ${{ github.repository_owner }}
-          GITHUB_REPO: ${{ github.event.repository.name }}
-        run: node scripts/generate-dashboard.mjs
-
-      - uses: actions/upload-pages-artifact@v5
-        with:
-          path: ./docs
-
-  deploy:
-    needs: build
-    runs-on: ubuntu-latest
-    environment:
-      name: github-pages
-      url: ${{ steps.deployment.outputs.page_url }}
-    steps:
-      - id: deployment
-        uses: actions/deploy-pages@v5
+          HOOK: ${{ secrets.CF_DEPLOY_HOOK }}
+        run: |
+          test -n "$HOOK" || { echo "::error::CF_DEPLOY_HOOK secret not set"; exit 1; }
+          curl -fsS -X POST "$HOOK" -o /dev/null -w "deploy hook POST -> HTTP %{http_code}\n"
