@@ -115,7 +115,7 @@ async function fetchBoardFields(projectId) {
        node(id: $projectId) { ... on ProjectV2 {
          title
          fields(first: 50) { nodes {
-           ... on ProjectV2SingleSelectField { id name options { id name } }
+           ... on ProjectV2SingleSelectField { id name options { id name color description } }
            ... on ProjectV2FieldCommon { id name dataType }
          } }
        } }
@@ -167,9 +167,12 @@ async function reconcileField(boardId, fieldName, expectedOptions, actualField) 
   if (toAdd.length > 0) {
     console.log(`  ~ field: ${fieldName} — add ${toAdd.length} option(s): ${toAdd.map((o) => o.name).join(", ")}`);
     if (ADD) {
-      // updateProjectV2Field replaces the whole option list — merge existing (preserve) + new.
+      // updateProjectV2Field REPLACES the whole option list. Each existing
+      // option MUST be passed back WITH its `id` so GitHub preserves it —
+      // without the id GitHub recreates the option with a NEW id, orphaning
+      // every board item's value for that option (silent data loss).
       const merged = [
-        ...actualField.options.map((o) => ({ name: o.name, color: o.color || "GRAY", description: "" })),
+        ...actualField.options.map((o) => ({ id: o.id, name: o.name, color: o.color || "GRAY", description: o.description || "" })),
         ...toAdd,
       ];
       await updateFieldOptions(actualField.id, merged);

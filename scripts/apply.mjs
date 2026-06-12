@@ -43,9 +43,22 @@ const REFERENCE_DIRS = ["scripts", ".github/actions", ".github/workflows"];
 const isExampleConfig = (rel) =>
   /^config\/([^/]+\/)?[^/]+\.example\.json$/.test(rel);
 
+// Deployment-owned files: each deployment owns its own hosting/refresh wiring,
+// so `apply` must NOT overwrite these (like it never touches config/*.json).
+// dashboard.yml differs per host (e.g. hub pings a Cloudflare deploy hook;
+// the template ships the generic version). Skip if the target already has one.
+const DEPLOYMENT_OWNED = new Set([".github/workflows/dashboard.yml"]);
+const skipBecauseDeploymentOwned = (rel) =>
+  DEPLOYMENT_OWNED.has(rel) && existsSync(join(TARGET, rel));
+
 let created = 0, updated = 0, unchanged = 0;
 
 function copyFile(rel) {
+  if (skipBecauseDeploymentOwned(rel)) {
+    console.log(`  = ${rel} (deployment-owned — kept)`);
+    unchanged++;
+    return;
+  }
   const content = readFileSync(join(SOURCE, rel));
   const dest = join(TARGET, rel);
   if (existsSync(dest)) {
