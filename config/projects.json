@@ -77,5 +77,15 @@
     "members": [
       "vilosia-ai"
     ]
+  },
+  {
+    "key": "SHOP",
+    "name": "Optivem Shop",
+    "repo": "https://github.com/optivem/shop",
+    "lead": "valentinajemuovic",
+    "members": [
+      "valentinajemuovic",
+      "jcupac"
+    ]
   }
 ]

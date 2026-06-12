@@ -15,6 +15,7 @@ body:
         - FRS — Flight Reservation System (FRS)
         - GHBL — Ghibli Encyclopedia
         - PWRH — Project Powerhouse
+        - SHOP — Optivem Shop
         - VGFN — Veg Finder
       default: 0
     validations:

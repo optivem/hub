@@ -6,16 +6,32 @@
     "url": "https://github.com/orgs/optivem/projects/18",
     "statusFieldId": "PVTSSF_lADOAMwK8c4BSMdAzg_zO2I",
     "statusOptionIds": {
+      "OPEN": "31e57f7a",
       "IN_PROGRESS": "6b6a9601",
       "IN_REVIEW": "a2132c0f",
       "DONE": "d5e37461"
     },
-    "courses": ["pipeline", "atdd"]
+    "courses": [
+      "pipeline",
+      "atdd"
+    ]
   },
   "statuses": [
-    { "key": "OPEN",        "name": "Open" },
-    { "key": "IN_PROGRESS", "name": "In Progress" },
-    { "key": "IN_REVIEW",   "name": "In Review" },
-    { "key": "DONE",        "name": "Done" }
+    {
+      "key": "OPEN",
+      "name": "Open"
+    },
+    {
+      "key": "IN_PROGRESS",
+      "name": "In Progress"
+    },
+    {
+      "key": "IN_REVIEW",
+      "name": "In Review"
+    },
+    {
+      "key": "DONE",
+      "name": "Done"
+    }
   ]
 }
