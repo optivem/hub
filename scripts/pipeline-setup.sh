@@ -221,11 +221,16 @@ step_apply_template() {
   cd "$WORKDIR"
 
   # Clone the new repo
-  git clone "https://x-access-token:${TOKEN}@github.com/${FULL_REPO}.git" repo 2>/dev/null
+  if ! clone_err=$(git clone "https://x-access-token:${TOKEN}@github.com/${FULL_REPO}.git" repo 2>&1); then
+    [ -n "$TOKEN" ] && clone_err=${clone_err//$TOKEN/***}  # never leak the token into the log
+    fatal "Failed to clone ${FULL_REPO}: $clone_err"
+  fi
   ok "Cloned $FULL_REPO"
 
   # Clone the template
-  git clone "https://github.com/${TEMPLATE_REPO}.git" template 2>/dev/null
+  if ! tmpl_err=$(git clone "https://github.com/${TEMPLATE_REPO}.git" template 2>&1); then
+    fatal "Failed to clone template ${TEMPLATE_REPO}: $tmpl_err"
+  fi
   ok "Cloned template $TEMPLATE_REPO"
 
   # Copy template files into the new repo
@@ -282,8 +287,13 @@ step_commit_and_push() {
   cd "$WORKDIR/repo"
 
   git add -A
-  git commit -m "Apply pipeline template from $TEMPLATE_REPO" > /dev/null 2>&1
-  git push origin main > /dev/null 2>&1
+  if ! commit_err=$(git commit -m "Apply pipeline template from $TEMPLATE_REPO" 2>&1); then
+    fatal "Failed to commit template changes: $commit_err"
+  fi
+  if ! push_err=$(git push origin main 2>&1); then
+    [ -n "$TOKEN" ] && push_err=${push_err//$TOKEN/***}  # origin URL carries the token — scrub it
+    fatal "Failed to push to $FULL_REPO: $push_err"
+  fi
 
   ok "Pushed template to $FULL_REPO"
 }
