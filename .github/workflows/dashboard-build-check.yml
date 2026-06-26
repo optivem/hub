@@ -1,0 +1,76 @@
+name: dashboard-build-check
+
+# Early-detection smoke test for the dashboard build.
+#
+# Cloudflare Pages is the only thing that actually BUILDS + DEPLOYS the live
+# dashboard (it runs `node scripts/generate-dashboard.mjs` on every push + on the
+# deploy-hook ping from dashboard.yml). The problem: when that CF build fails
+# (e.g. an expired GITHUB_TOKEN -> 401 -> the generator crashes), the failure is
+# buried in Cloudflare's logs and GitHub shows green — so it can rot for days.
+#
+# This workflow runs the SAME build command here, in GitHub, on a schedule. It
+# does NOT deploy anything — it just proves the build *can* succeed (token valid,
+# GraphQL reachable, config valid, script runs to completion). If it can't, this
+# run goes RED and notifies, at the source, instead of a student finding out.
+#
+# IMPORTANT — token parity: DASHBOARD_BUILD_TOKEN must hold the SAME PAT value as
+# Cloudflare's GITHUB_TOKEN build-env var. That parity is what lets this check
+# catch a CF-token expiry (a different token would pass here while CF still fails).
+# Required PAT scopes: repo + read:org + read:project (and SSO-authorized for the
+# optivem org if SAML SSO is enforced).
+
+on:
+  schedule:
+    - cron: '17 * * * *'   # hourly — catch a bad token within ~1h
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - 'scripts/generate-dashboard.mjs'
+      - 'scripts/load-config.mjs'
+      - 'scripts/dashboard-template.html'
+      - 'scripts/dashboard.css'
+      - 'scripts/new-issue-body.md'
+      - 'config/**'
+      - '.github/workflows/dashboard-build-check.yml'
+
+permissions:
+  contents: read
+
+concurrency:
+  group: dashboard-build-check
+  cancel-in-progress: true
+
+jobs:
+  build-check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+
+      - name: Fail early if the build token is missing
+        env:
+          TOKEN: ${{ secrets.DASHBOARD_BUILD_TOKEN }}
+        run: |
+          test -n "$TOKEN" || {
+            echo "::error::DASHBOARD_BUILD_TOKEN secret is not set. Add it with the SAME PAT value used in Cloudflare's GITHUB_TOKEN (scopes: repo, read:org, read:project; SSO-authorized for optivem)."
+            exit 1
+          }
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'   # match Cloudflare's NODE_VERSION
+
+      - name: Build dashboard (smoke test — no deploy)
+        env:
+          GITHUB_TOKEN: ${{ secrets.DASHBOARD_BUILD_TOKEN }}
+          GITHUB_OWNER: optivem
+          GITHUB_REPO: hub
+        run: |
+          node scripts/generate-dashboard.mjs
+          # Prove it ran to completion (the generator only writes these on success).
+          test -s docs/index.html || { echo "::error::generator exited 0 but docs/index.html is empty/missing"; exit 1; }
+          test -s docs/version.json || { echo "::error::generator exited 0 but docs/version.json is empty/missing"; exit 1; }
+          echo "Build OK — $(wc -c < docs/index.html) bytes, version $(cat docs/version.json)"
+
+      # Build output is intentionally discarded — this job only verifies the
+      # build succeeds. Cloudflare remains the only thing that deploys.
