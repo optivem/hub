@@ -13,11 +13,16 @@ name: dashboard-build-check
 # GraphQL reachable, config valid, script runs to completion). If it can't, this
 # run goes RED and notifies, at the source, instead of a student finding out.
 #
-# IMPORTANT — token parity: DASHBOARD_BUILD_TOKEN must hold the SAME PAT value as
-# Cloudflare's GITHUB_TOKEN build-env var. That parity is what lets this check
-# catch a CF-token expiry (a different token would pass here while CF still fails).
-# Required PAT scopes: repo + read:org + read:project (and SSO-authorized for the
-# optivem org if SAML SSO is enforced).
+# Token: uses PROJECT_TOKEN (the same org secret auto-on-created.yml uses; it has
+# project read+write, which is more than enough for the read-only generator).
+#
+# Token parity note: to also catch a *Cloudflare* token expiry, set Cloudflare's
+# GITHUB_TOKEN build-env var to the SAME PAT as PROJECT_TOKEN — then this check is
+# a true mirror of the CF build (one token everywhere). If CF keeps a separate
+# token, this still catches generator/config/GraphQL breakage and PROJECT_TOKEN's
+# own expiry, just not the CF token's.
+# Required PAT scopes: repo + read:org + read:project (SSO-authorized for optivem
+# if SAML SSO is enforced).
 
 on:
   schedule:
@@ -49,10 +54,10 @@ jobs:
 
       - name: Fail early if the build token is missing
         env:
-          TOKEN: ${{ secrets.DASHBOARD_BUILD_TOKEN }}
+          TOKEN: ${{ secrets.PROJECT_TOKEN }}
         run: |
           test -n "$TOKEN" || {
-            echo "::error::DASHBOARD_BUILD_TOKEN secret is not set. Add it with the SAME PAT value used in Cloudflare's GITHUB_TOKEN (scopes: repo, read:org, read:project; SSO-authorized for optivem)."
+            echo "::error::PROJECT_TOKEN secret is not available to this repo (org secret used by auto-on-created.yml). Verify it is granted to optivem/hub."
             exit 1
           }
 
@@ -62,7 +67,7 @@ jobs:
 
       - name: Build dashboard (smoke test — no deploy)
         env:
-          GITHUB_TOKEN: ${{ secrets.DASHBOARD_BUILD_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.PROJECT_TOKEN }}
           GITHUB_OWNER: optivem
           GITHUB_REPO: hub
         run: |
